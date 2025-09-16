@@ -1,0 +1,76 @@
+{
+    "outputData": {
+      "chatRoomId": 123456778,
+      "userId": 123456778,
+      "userInfo": {
+        "name": "김춘식",
+        "age": 11,
+        "address": "서울시 중구 명동 제네시스랩",
+        "phoneNumber": "010-1234-5678",
+        "email": "ch.shin@genesislab.com",
+        "schoolName": "제네시스랩 초등학교",
+        "grade": 5,
+        "class": 4,
+        "homeroomTeacher": {
+          "name": "신명석",
+          "phoneNumber": "010-9876-5432",
+          "email": "ms.shin@genesislab.com"
+        }
+      },
+      "aiMessageData": {
+        "message": "알겠어, 혼자 가기 무서운 건 당연한 거야. 내가 같이 가줄 수 있으면 좋겠는데, 대신 믿을 만한 선생님이나 부모님께 같이 가달라고 부탁해보는 건 어때?",
+        "timestamp": "2025-09-15 05:49:43.180074"
+      },
+      "sessionData": {
+        "nextPhase": 3,
+        "issueData": [
+          {
+            "issueId": 0,
+            "isConfirmed": false
+          }
+        ],
+        "problemData":{
+          "observationProblem":[
+            ],
+          "confirmedProblem":[
+            ]
+        },
+        "assessmentData": [
+          {
+            "assessmentId": 1,
+            "isAssessmentConfirmed": false,
+            "isAssessmentCompleted": false
+          },
+          {
+            "assessmentId": 2,
+            "isAssessmentConfirmed": false,
+            "isAssessmentCompleted": false
+          },
+          {
+            "assessmentId": 3,
+            "isAssessmentConfirmed": false,
+            "isAssessmentCompleted": false
+          },
+          {
+            "assessmentId": 4,
+            "isAssessmentConfirmed": false,
+            "isAssessmentCompleted": false
+          },
+          {
+            "assessmentId": 5,
+            "isAssessmentConfirmed": false,
+            "isAssessmentCompleted": false
+          }
+        ],
+        "attentionLevel": 1
+      },
+      "flagData": {
+        "isFirstVisit": true,
+        "isConversationContinued": true,
+        "isFinishedConversation": false,
+        "isSuicideTendency": false
+      }
+    },
+    "totalDuration": 3.302209
+  }
+  

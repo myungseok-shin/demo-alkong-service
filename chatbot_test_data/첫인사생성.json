@@ -1,0 +1,82 @@
+{
+    "chatRoomId": 123456778,
+    "userId": 123456778,
+    "userInfo": {
+        "name": "김춘식",
+        "age": 15,
+        "address": "서울시 중구 명동 제네시스랩",
+        "phoneNumber": "010-1234-5678",
+        "email": "ch.shin@genesislab.com",
+        "schoolName": "제네시스랩 초등학교",
+        "grade": 3,
+        "class": 4,
+        "homeroomTeacher": {
+            "name": "신명석",
+            "phoneNumber": "010-9876-5432",
+            "email": "ms.shin@genesislab.com"
+        }
+    },
+    "conversationHistoryData": {
+        "previousConversationData": [
+        ],
+        "currentHistory": [
+        ]
+    },
+    "userMessageData": {
+        "timestamp": "2025-08-22 13:00:00",
+        "message": ""
+    },
+    "sessionData": {
+        "currentPhase": 1,
+        "problemData": {
+            "observationProblem": [],
+            "confirmedProblem": []
+        },
+        "issueData": [
+
+        ],
+        "assessmentData": [
+            {
+                "assessmentId": 1,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            },
+            {
+                "assessmentId": 2,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            },
+            {
+                "assessmentId": 3,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            },
+            {
+                "assessmentId": 4,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            },
+            {
+                "assessmentId": 5,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            }
+        ],
+        "attentionLevel": 1
+    },
+    "flagData": {
+        "isFirstVisit": true,
+        "isConversationContinued": false,
+        "isFinishedConversation": false,
+        "isSuicideTendency": false
+    },
+    "additionalData": {
+        "aiPersona": {
+            "id": 1,
+            "name": "김알콩",
+            "gender": "여성",
+            "personality": "대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감",
+            "formality": "반말"
+        }
+    }
+}

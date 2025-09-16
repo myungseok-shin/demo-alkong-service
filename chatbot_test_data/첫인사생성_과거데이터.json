@@ -1,0 +1,250 @@
+{
+    "chatRoomId": 123456778,
+    "userId": 123456778,
+    "userInfo": {
+        "name": "김춘식",
+        "age": 15,
+        "address": "서울시 중구 명동 제네시스랩",
+        "phoneNumber": "010-1234-5678",
+        "email": "ch.shin@genesislab.com",
+        "schoolName": "제네시스랩 초등학교",
+        "grade": 3,
+        "class": 4,
+        "homeroomTeacher": {
+            "name": "신명석",
+            "phoneNumber": "010-9876-5432",
+            "email": "ms.shin@genesislab.com"
+        }
+    },
+    "conversationHistoryData": {
+        "previousConversationData": [
+            {
+                "summary": "학생은 최근 아이브 신곡 발매에 관심을 보이며 일상적으로는 공부와 입시 준비로 인해 매우 바쁜 상태임을 표현했습니다. 친구들과의 교류가 줄어들고, 공부에 대한 부담감과 스트레스를 강하게 느끼고 있습니다. 특히 집에서는 어머니의 잦은 잔소리와 공부, 입시에 대한 대화만 반복되어 집에 가기도 싫고, 편하게 쉴 수 없다고 토로했습니다. 어머니와의 소통이 원활하지 않고, 자신이 좋아하는 것에 대한 관심을 받지 못해 서운함과 외로움을 느끼고 있습니다. 학생은 힘들고 답답한 감정을 반복적으로 드러냈으며, 공부를 그만두고 싶다는 심정도 표현했습니다. 자살이나 자해에 대한 직접적인 언급은 없으나, 정서적으로 상당한 부담과 고립감을 느끼고 있어 지속적인 관심이 필요해 보입니다.",
+                "timestamp": "2025-08-21 15:30:00",
+                "events": [
+                    {
+                        "event": "아이브 신곡 발매",
+                        "when": "오늘",
+                        "emotion": "기대, 즐거움"
+                    },
+                    {
+                        "event": "공부와 입시 준비",
+                        "when": "현재",
+                        "emotion": "바쁨, 힘듦, 스트레스"
+                    },
+                    {
+                        "event": "친구들과 교류 감소",
+                        "when": "현재",
+                        "emotion": "아쉬움"
+                    },
+                    {
+                        "event": "어머니의 잦은 잔소리",
+                        "when": "현재",
+                        "emotion": "답답함, 싫음"
+                    },
+                    {
+                        "event": "집에서 쉴 수 없음",
+                        "when": "현재",
+                        "emotion": "불편함, 피로"
+                    },
+                    {
+                        "event": "어머니와의 소통 단절",
+                        "when": "현재",
+                        "emotion": "서운함, 외로움"
+                    }
+                ],
+                "emotionalState": "지치고 힘든 상태이며, 스트레스와 답답함, 외로움, 서운함 등 부정적인 감정이 두드러짐. 소통의 부재와 관심 부족으로 인해 정서적으로 고립감을 느끼고 있음.",
+                "agenda": [
+                    "아이브와 K-pop 관련 이야기",
+                    "공부 스트레스 해소법",
+                    "가족(특히 어머니)과의 소통 방법"
+                ],
+                "issueData":[
+                    {
+                        "issueId": 1,
+                        "isConfirmed": false,
+                        "keyword": ["우울", "스트레스"]
+                    }
+                ],
+                "problemData":{
+                    "observationProblem":[
+                        {
+                            "problemId": 1,
+                            "isConfirmed": false,
+                            "keyword": ["우울", "스트레스"]
+                        }
+                    ],
+                    "confirmedProblem":[
+                        {
+                            "problemId": 2,
+                            "isConfirmed": false,
+                            "keyword": ["우울", "스트레스"]
+                        }
+                    ]
+                },
+                "assessmentData":[
+                    {
+                        "assessmentId": 1,
+                        "isAssessmentConfirmed": false,
+                        "isAssessmentCompleted": false
+                    },
+                    {
+                        "assessmentId": 2,
+                        "isAssessmentConfirmed": false,
+                        "isAssessmentCompleted": false
+                    },
+                    {
+                        "assessmentId": 3,
+                        "isAssessmentConfirmed": false,
+                        "isAssessmentCompleted": false
+                    },
+                    {
+                        "assessmentId": 4,
+                        "isAssessmentConfirmed": false,
+                        "isAssessmentCompleted": false
+                    },
+                    {
+                        "assessmentId": 5,
+                        "isAssessmentConfirmed": true,
+                        "isAssessmentCompleted": true
+                    }
+                ],
+                "attentionLevel":1,
+                "phase": 300
+            },
+            {
+                "summary": "학생은 오늘 있었던 체육대회에서 반 대표로 달리기 시합에 참가했으나 넘어져서 실수를 했다고 합니다. 친구들이 실망했을 것 같다는 걱정과 함께 자책하는 모습을 보였습니다. 하지만 친한 친구들이 위로해주고 응원해줘서 조금은 위안이 되었다고 합니다. 방과후에는 피아노 학원에 다녀왔는데, 다음 주 발표회 준비로 긴장되고 떨린다고 했습니다.",
+                "timestamp": "2025-08-20 16:45:00",
+                "events": [
+                    {
+                        "event": "체육대회 달리기 시합 실수",
+                        "when": "오늘 오전",
+                        "emotion": "당황, 부끄러움, 자책"
+                    },
+                    {
+                        "event": "친구들의 위로",
+                        "when": "오늘 점심",
+                        "emotion": "위안, 고마움"
+                    },
+                    {
+                        "event": "피아노 발표회 준비",
+                        "when": "방과후",
+                        "emotion": "긴장, 불안"
+                    }
+                ],
+                "emotionalState": "실수로 인한 자책감과 부끄러움이 있으나, 친구들의 지지로 약간의 위안을 받음. 다가오는 피아노 발표회로 인한 긴장감과 불안감이 있음.",
+                "agenda": [
+                    "체육대회 경험 나누기",
+                    "실수에 대한 대처방법",
+                    "발표회 준비와 긴장 해소법"
+                ],
+                "issueData":[],
+                "problemData":{
+                    "observationProblem":[],
+                    "confirmedProblem":[]
+                },
+                "assessmentData":[],
+                "attentionLevel":1,
+                "phase": 300
+            },
+            {
+                "summary": "학생은 새로 시작한 미술 동아리 활동에 대해 이야기했습니다. 처음에는 걱정했지만 생각보다 재미있어서 기뻐하는 모습을 보였고, 특히 수채화 그리기에 흥미를 느꼈다고 합니다. 동아리 친구들과도 잘 지내고 있으며, 다음 주 전시회 준비를 위해 방과 후에 남아서 그림을 그리고 있다고 합니다. 다만 미술 준비물 구입으로 용돈이 부족해 고민이라고 했습니다.",
+                "timestamp": "2025-08-19 14:20:00",
+                "events": [
+                    {
+                        "event": "미술 동아리 활동",
+                        "when": "이번 주",
+                        "emotion": "즐거움, 흥미"
+                    },
+                    {
+                        "event": "수채화 그리기 시작",
+                        "when": "어제",
+                        "emotion": "재미, 성취감"
+                    },
+                    {
+                        "event": "전시회 준비",
+                        "when": "현재",
+                        "emotion": "기대, 설렘"
+                    },
+                    {
+                        "event": "용돈 부족",
+                        "when": "현재",
+                        "emotion": "걱정, 고민"
+                    }
+                ],
+                "emotionalState": "새로운 활동에 대한 즐거움과 성취감이 두드러지며, 전시회에 대한 기대감이 있음. 용돈 문제로 인한 약간의 걱정이 있으나 전반적으로 긍정적인 상태.",
+                "agenda": [
+                    "미술 동아리 활동 경험",
+                    "수채화 그리기 이야기",
+                    "용돈 관리 방법"
+                ],
+                "issueData":[],
+                "problemData":{
+                    "observationProblem":[],
+                    "confirmedProblem":[]
+                },
+                "assessmentData":[],
+                "attentionLevel":1,
+                "phase": 300
+            }
+        ],
+        "currentHistory": [
+        ]
+    },
+    "userMessageData": {
+        "timestamp": "2025-08-22 13:00:00",
+        "message": ""
+    },
+    "sessionData": {
+        "currentPhase": 1,
+        "problemData": {
+            "observationProblem": [],
+            "confirmedProblem": []
+        },
+        "issueData": [
+        ],
+        "assessmentData": [
+            {
+                "assessmentId": 1,
+                "isAssessmentConfirmed": true,
+                "isAssessmentCompleted": true
+            },
+            {
+                "assessmentId": 2,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            },
+            {
+                "assessmentId": 3,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            },
+            {
+                "assessmentId": 4,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            },
+            {
+                "assessmentId": 5,
+                "isAssessmentConfirmed": false,
+                "isAssessmentCompleted": false
+            }
+        ],
+        "attentionLevel": 1
+    },
+    "flagData": {
+        "isFirstVisit": true,
+        "isConversationContinued": true,
+        "isFinishedConversation": false,
+        "isSuicideTendency": false
+    },
+    "additionalData": {
+        "aiPersona": {
+            "id": 1,
+            "name": "김알콩",
+            "gender": "여성",
+            "personality": "대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감",
+            "formality": "반말"
+        }
+    }
+}
