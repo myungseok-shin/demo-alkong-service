@@ -398,16 +398,12 @@ if not st.session_state.messages:
                 is_first_visit=st.session_state.is_first_visit
             )
             
-            # API 요청 데이터 로깅
-            logging.info(f"API 요청 데이터:\n{json.dumps(input_data, indent=2, ensure_ascii=False)}")
             
             response = st.session_state.chatbot_api.post_request_via_sse(input_data)
             print("\n=== 응답 데이터 확인 ===")
             print(f"응답 타입: {type(response)}")
             print(f"응답 내용: {response}")
             
-            # API 응답 데이터 로깅
-            logging.info(f"API 응답 데이터:\n{json.dumps(response, indent=2, ensure_ascii=False) if isinstance(response, dict) else response}")
             
             # response: 형식의 문자열을 JSON으로 파싱
             if isinstance(response, str) and response.startswith("response:"):
