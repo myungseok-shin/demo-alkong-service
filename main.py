@@ -490,8 +490,6 @@ if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.sessio
     
     # 챗봇 응답 생성
     with st.spinner("생각 중..."):
-            # API 요청 데이터 로깅
-            logger.info(f"API 요청 데이터:\n{json.dumps(input_data, indent=2, ensure_ascii=False)}")
             
             response = st.session_state.chatbot_api.post_request_via_sse(input_data)
             
@@ -499,8 +497,7 @@ if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.sessio
             # response: 형식의 문자열을 파싱한 후에도 로깅
             if isinstance(response, str) and response.startswith("response:"):
                 parsed_response = json.loads(response[len("response:"):].strip())
-                logger.info(f"파싱된 응답 데이터:\n{json.dumps(parsed_response, indent=2, ensure_ascii=False)}")
-            
+
             # response: 형식의 문자열을 JSON으로 파싱
             if isinstance(response, str) and response.startswith("response:"):
                 response = json.loads(response[len("response:"):].strip())
