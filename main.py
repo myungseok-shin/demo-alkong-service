@@ -4,6 +4,9 @@ from src.chatbot_api import ChatbotAPI
 from datetime import datetime
 import base64
 from pathlib import Path
+import asyncio
+import time
+import os
 
 # 단계 매핑 딕셔너리
 PHASE_MAPPING = {
@@ -243,14 +246,16 @@ if 'assessment_data' not in st.session_state:
         for i in range(1, 6)
     ]
 if 'issue_data' not in st.session_state:
-    st.session_state.issue_data = [{"issueId": 0, "isConfirmed": False}]
+    st.session_state.issue_data = []  # API 스펙에 맞춰 빈 배열로 초기화
 if 'problem_data' not in st.session_state:
     st.session_state.problem_data = {
         "observationProblem": [],
         "confirmedProblem": []
-    }
+    }  # API 스펙과 동일한 구조 유지
 if 'last_displayed_message_index' not in st.session_state:
     st.session_state.last_displayed_message_index = 0
+if 'is_processing' not in st.session_state:
+    st.session_state.is_processing = False
 
 # 사이드바 - 사용자 정보 입력
 with st.sidebar:
@@ -281,7 +286,19 @@ def display_metadata(metadata, is_polling=False):
     
     st.markdown(f"""<div class="message-metadata">{base_metadata}</div>""", unsafe_allow_html=True)
 
-# 메시지 표시 함수
+# 이전 메시지들만 표시하는 함수
+def display_previous_messages(messages, chat_placeholder):
+    for message in messages:
+        if message["role"] == "assistant":
+            with st.chat_message(message["role"], avatar=AI_AVATAR):
+                st.write(message["content"])
+                if "metadata" in message:
+                    display_metadata(message["metadata"], is_polling=False)
+        else:
+            with st.chat_message(message["role"], avatar=USER_AVATAR):
+                st.write(message["content"])
+
+# 전체 메시지 표시 함수
 def display_messages(messages, chat_placeholder, is_polling=False):
     with chat_placeholder.container():
         for message in messages:
@@ -336,10 +353,8 @@ def create_input_data(user_name, user_age, user_school, user_grade, user_class,
                 "problemData": {
                     "observationProblem": [],
                     "confirmedProblem": []
-                },
-                "issueData": [
-                    {"issueId": 0, "isConfirmed": False}
-                ],
+                },  # API 스펙과 동일한 구조 유지
+                "issueData": [],  # API 스펙에 맞춰 빈 배열로 초기화
                 "assessmentData": [
                     {"assessmentId": i, "isAssessmentConfirmed": False, "isAssessmentCompleted": False} 
                     for i in range(1, 6)
@@ -366,6 +381,7 @@ def create_input_data(user_name, user_age, user_school, user_grade, user_class,
 
 # 첫 로드시 자동 메시지 생성
 if not st.session_state.messages:
+    
     # 요청 시작 시간 기록
     request_start_time = datetime.now()
     with st.chat_message("assistant", avatar=AI_AVATAR):
@@ -382,20 +398,33 @@ if not st.session_state.messages:
                 is_first_visit=st.session_state.is_first_visit
             )
             
-            results = st.session_state.chatbot_api.post_multiple_request(input_data)
-            if results:
-                response = results[0]
-                ai_message = response['outputData']['aiMessageData']['message']
+            # API 요청 데이터 로깅
+            logging.info(f"API 요청 데이터:\n{json.dumps(input_data, indent=2, ensure_ascii=False)}")
+            
+            response = st.session_state.chatbot_api.post_request_via_sse(input_data)
+            print("\n=== 응답 데이터 확인 ===")
+            print(f"응답 타입: {type(response)}")
+            print(f"응답 내용: {response}")
+            
+            # API 응답 데이터 로깅
+            logging.info(f"API 응답 데이터:\n{json.dumps(response, indent=2, ensure_ascii=False) if isinstance(response, dict) else response}")
+            
+            # response: 형식의 문자열을 JSON으로 파싱
+            if isinstance(response, str) and response.startswith("response:"):
+                response = json.loads(response[len("response:"):].strip())
+                print(f"파싱된 응답: {json.dumps(response, indent=2, ensure_ascii=False)}")
+            if response and isinstance(response, dict):
+                ai_message = response['aiMessageData']['message']
                 total_duration = response['totalDuration']
-                next_phase = response['outputData']['sessionData']['nextPhase']
-                attention_level = response['outputData']['sessionData']['attentionLevel']
-                
+                next_phase = response['sessionData']['nextPhase']
+                attention_level = response['sessionData']['attentionLevel']
+
                 # 전체 소요 시간 계산 (요청부터 응답 처리까지)
                 response_time = datetime.now()
                 total_elapsed_time = (response_time - request_start_time).total_seconds()
                 
                 # 챗봇 메시지와 메타데이터 저장
-                st.session_state.messages.append({
+                new_message = {
                     "role": "assistant", 
                     "content": ai_message,
                     "metadata": {
@@ -404,10 +433,26 @@ if not st.session_state.messages:
                         "current_phase": st.session_state.current_phase,
                         "next_phase": next_phase,
                         "attention_level": attention_level,
-                        "is_finished": response['outputData']['flagData']['isFinishedConversation'],
-                        "is_suicidal": response['outputData']['flagData']['isSuicidalTendencyDetected']
+                        "is_finished": response['flagData']['isFinishedConversation'],
+                        "is_suicidal": response['flagData']['isSuicidalTendencyDetected']
                     }
-                })
+                }
+                st.session_state.messages.append(new_message)
+                
+                # AI 응답 스트리밍
+                chat_placeholder.empty()
+                with chat_placeholder.container():
+                    # 이전 메시지들 표시 (마지막 메시지 제외)
+                    display_previous_messages(st.session_state.messages[:-1], chat_placeholder)
+                    # 새 메시지 스트리밍
+                    with st.chat_message("assistant", avatar=AI_AVATAR):
+                        message_placeholder = st.empty()
+                        for j in range(len(ai_message) + 1):
+                            message_placeholder.markdown(ai_message[:j] + "▌")
+                            time.sleep(0.02)
+                        message_placeholder.markdown(ai_message)
+                        display_metadata(new_message["metadata"], is_polling=False)
+                
                 # 현재 대화 히스토리에 AI 응답 추가
                 st.session_state.current_history.append({
                     "role": "ai",
@@ -418,12 +463,14 @@ if not st.session_state.messages:
                 st.session_state.current_phase = next_phase
                 st.session_state.is_first_visit = False
 
-# 사용자 입력
-if prompt := st.chat_input("메시지를 입력하세요..."):
+# 사용자 입력 (처리 중일 때는 비활성화)
+if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.session_state.is_processing):
     # 요청 시작 시간 기록
     request_start_time = datetime.now()
     # 사용자 메시지 저장
     st.session_state.messages.append({"role": "user", "content": prompt})
+    # 사용자 입력 로깅
+
     
     # 사용자 메시지 즉시 표시
     chat_placeholder.empty()
@@ -442,22 +489,37 @@ if prompt := st.chat_input("메시지를 입력하세요..."):
         user_message=prompt
     )
 
+    # 처리 중 상태로 설정
+    st.session_state.is_processing = True
+    
     # 챗봇 응답 생성
     with st.spinner("생각 중..."):
-            results = st.session_state.chatbot_api.post_multiple_request(input_data)
+            # API 요청 데이터 로깅
+            logger.info(f"API 요청 데이터:\n{json.dumps(input_data, indent=2, ensure_ascii=False)}")
+            
+            response = st.session_state.chatbot_api.post_request_via_sse(input_data)
+            
+            
+            # response: 형식의 문자열을 파싱한 후에도 로깅
+            if isinstance(response, str) and response.startswith("response:"):
+                parsed_response = json.loads(response[len("response:"):].strip())
+                logger.info(f"파싱된 응답 데이터:\n{json.dumps(parsed_response, indent=2, ensure_ascii=False)}")
+            
+            # response: 형식의 문자열을 JSON으로 파싱
+            if isinstance(response, str) and response.startswith("response:"):
+                response = json.loads(response[len("response:"):].strip())
             # UI 표시 완료 시간 기록
             display_time = datetime.now()
             total_elapsed_time = (display_time - request_start_time).total_seconds()
             
-            if results:
-                response = results[0]  # 첫 번째 응답 사용
-                ai_message = response['outputData']['aiMessageData']['message']
+            if response:
+                ai_message = response['aiMessageData']['message']
                 total_duration = response['totalDuration']
-                next_phase = response['outputData']['sessionData']['nextPhase']
-                attention_level = response['outputData']['sessionData']['attentionLevel']
+                next_phase = response['sessionData']['nextPhase']
+                attention_level = response['sessionData']['attentionLevel']
                 
-                # 챗봇 메시지와 메타데이터 저장
-                st.session_state.messages.append({
+                # 챗봇 메시지와 메타데이터 준비
+                new_message = {
                     "role": "assistant", 
                     "content": ai_message,
                     "metadata": {
@@ -466,10 +528,25 @@ if prompt := st.chat_input("메시지를 입력하세요..."):
                         "current_phase": st.session_state.current_phase,
                         "next_phase": next_phase,
                         "attention_level": attention_level,
-                        "is_finished": response['outputData']['flagData']['isFinishedConversation'],
-                        "is_suicidal": response['outputData']['flagData']['isSuicidalTendencyDetected']
+                        "is_finished": response['flagData']['isFinishedConversation'],
+                        "is_suicidal": response['flagData']['isSuicidalTendencyDetected']
                     }
-                })
+                }
+                st.session_state.messages.append(new_message)
+                
+                # AI 응답 스트리밍
+                chat_placeholder.empty()
+                with chat_placeholder.container():
+                    # 이전 메시지들 표시 (마지막 메시지 제외)
+                    display_previous_messages(st.session_state.messages[:-1], chat_placeholder)
+                    # 새 메시지 스트리밍
+                    with st.chat_message("assistant", avatar=AI_AVATAR):
+                        message_placeholder = st.empty()
+                        for j in range(len(ai_message) + 1):
+                            message_placeholder.markdown(ai_message[:j] + "▌")
+                            time.sleep(0.02)
+                        message_placeholder.markdown(ai_message)
+                        display_metadata(new_message["metadata"], is_polling=False)
                 
                 # 대화 히스토리에 사용자 메시지와 AI 응답 추가
                 st.session_state.current_history.append({
@@ -484,11 +561,22 @@ if prompt := st.chat_input("메시지를 입력하세요..."):
                 # 세션 상태 업데이트
                 st.session_state.current_phase = next_phase
                 st.session_state.is_first_visit = False
+                st.session_state.is_processing = False  # 처리 완료
                 # 세션 데이터 업데이트
-                st.session_state.assessment_data = response['outputData']['sessionData']['assessmentData']
-                st.session_state.issue_data = response['outputData']['sessionData']['issueData']
-                st.session_state.problem_data = response['outputData']['sessionData']['problemData']
+                print("\n=== 응답 데이터 확인 ===")
+                print(f"응답의 assessmentData: {json.dumps(response['sessionData']['assessmentData'], indent=2, ensure_ascii=False)}")
+                print(f"응답의 issueData: {json.dumps(response['sessionData']['issueData'], indent=2, ensure_ascii=False)}")
+                print(f"응답의 problemData: {json.dumps(response['sessionData']['problemData'], indent=2, ensure_ascii=False)}")
+                
+                st.session_state.assessment_data = response['sessionData']['assessmentData']
+                st.session_state.issue_data = response['sessionData']['issueData']
+                st.session_state.problem_data = response['sessionData']['problemData']
+                
+                print("\n=== 업데이트 후 세션 상태 확인 ===")
+                print(f"세션의 assessmentData: {json.dumps(st.session_state.assessment_data, indent=2, ensure_ascii=False)}")
+                print(f"세션의 issueData: {json.dumps(st.session_state.issue_data, indent=2, ensure_ascii=False)}")
+                print(f"세션의 problemData: {json.dumps(st.session_state.problem_data, indent=2, ensure_ascii=False)}")
 
-# 채팅 영역 최종 업데이트
+# 채팅 영역 최종 업데이트 (스트리밍 없이)
 chat_placeholder.empty()
 display_messages(st.session_state.messages, chat_placeholder)

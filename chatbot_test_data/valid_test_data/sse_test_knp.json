@@ -1,0 +1,18 @@
+{
+    "message": "오늘은 날씨가 어때?",
+    "userInfo": {
+        "name": "김춘식",
+        "age": 15,
+        "address": "서울시 중구 명동 제네시스랩",
+        "phoneNumber": "010-1234-5678",
+        "email": "ch.shin@genesislab.com",
+        "schoolName": "제네시스랩 초등학교",
+        "grade": 3,
+        "class": 4,
+        "homeroomTeacher": {
+            "name": "신명석",
+            "phoneNumber": "010-9876-5432",
+            "email": "ms.shin@genesislab.com"
+        }
+    }
+}

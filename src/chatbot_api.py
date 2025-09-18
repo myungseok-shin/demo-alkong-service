@@ -21,6 +21,36 @@ class ChatbotAPI:
         }
         self.polling_interval = polling_interval
 
+    def post_request_via_sse(self, input_data):
+        target_url = f"{self.api_url}/{self.endpoint}/sse"
+
+        data = {
+            "params_json": json.dumps(input_data, ensure_ascii=False),
+            "callback_url": ""
+        }
+
+        response = requests.post(target_url, headers=self.headers, data=data)
+        response_text = response.text
+        
+        # response: 부분을 제거하고 JSON 파싱
+        if response_text.startswith("response:"):
+            json_str = response_text[len("response:"):].strip()
+            try:
+                response_data = json.loads(json_str)
+                print("\nPOST 응답 데이터 (parsed):")
+                print(json.dumps(response_data, indent=2, ensure_ascii=False))
+                print("-" * 50)
+                # results.outputData와 totalDuration을 합쳐서 반환
+                output_data = response_data.get('results', {}).get('outputData', {})
+                output_data['totalDuration'] = response_data.get('results', {}).get('totalDuration', 0)
+                return output_data
+            except json.JSONDecodeError as e:
+                print(f"JSON 파싱 에러: {str(e)}")
+                print("원본 응답:")
+                print(response_text)
+                raise
+        
+        return response_text
 
     async def post_request(self, input_data):
         target_url = f"{self.api_url}/{self.endpoint}"
@@ -162,177 +192,164 @@ class ChatbotAPI:
             loop.close()
 
 ################################
-################################################################
-################################################################
-################################
 
-#     # httpx를 사용하는 새로운 메서드들
-#     async def post_request_httpx(self, input_data):
-#         target_url = f"{self.api_url}/{self.endpoint}"
-#         duration_test_url = f"{self.api_url}/alkong_duration_testtest"
 
-#         data = {
-#             "params_json": json.dumps(input_data),
-#             "callback_url": ""
-#         }
+    # httpx를 사용하는 새로운 메서드들
+    async def post_request_httpx(self, input_data):
+        target_url = f"{self.api_url}/{self.endpoint}"
+        duration_test_url = f"{self.api_url}/alkong_duration_testtest"
 
-#         print(f"\n전송할 데이터 크기: {len(str(data))} bytes")
-#         print(f"요청 URL: {target_url}")
+        data = {
+            "params_json": json.dumps(input_data, ensure_ascii=False),
+            "callback_url": ""
+        }
 
-#         async with httpx.AsyncClient(timeout=30.0) as client:
-#             try:
-#                 # 요청 시작 직전 시간
-#                 before_request = datetime.now()
+        print(f"\n전송할 데이터 크기: {len(str(data))} bytes")
+        print(f"요청 URL: {target_url}")
+
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            try:
+                # 요청 시작 직전 시간
+                before_request = datetime.now()
                 
-#                 response = await client.post(duration_test_url, headers=self.headers, data=data)
+                response = await client.post(target_url, headers=self.headers, data=data)
+                response.raise_for_status()
+                result = response.json()
                 
-#                 # 응답 받은 직후 시간
-#                 after_request = datetime.now()
-#                 network_time = (after_request - before_request).total_seconds()
-#                 print(f"순수 네트워크 요청/응답 시간: {network_time:.3f}초")
+                # 응답 받은 직후 시간
+                after_request = datetime.now()
+                network_time = (after_request - before_request).total_seconds()
+                print(f"POST 요청 시간: {network_time:.3f}초")
                 
-#                 # 응답 처리 시작
-#                 response.raise_for_status()
-#                 result = response.json()
-                
-#                 # 응답 처리 완료 시간
-#                 after_processing = datetime.now()
-#                 processing_time = (after_processing - after_request).total_seconds()
-#                 print(f"응답 처리 시간: {processing_time:.3f}초")
-                
-#                 return result
-#             except httpx.HTTPStatusError as e:
-#                 error_text = response.text
-#                 raise Exception(f"Failed to post api: Status {response.status_code}, Error: {error_text}")
-#             except httpx.RequestError as e:
-#                 raise Exception(f"Failed to post api: Network error: {str(e)}")
+                return result
+            except httpx.HTTPStatusError as e:
+                error_text = response.text
+                raise Exception(f"Failed to post api: Status {response.status_code}, Error: {error_text}")
+            except httpx.RequestError as e:
+                raise Exception(f"Failed to post api: Network error: {str(e)}")
 
-#     async def get_request_httpx(self, request_id):
-#         target_url = f"{self.api_url}/{self.endpoint}/{request_id}/status"
-#         duration_test_url = f"{self.api_url}/alkong_duration_testtest/{request_id}/status"
-#         start_time = datetime.now()
-#         poll_count = 0
+    async def get_request_httpx(self, request_id):
+        target_url = f"{self.api_url}/{self.endpoint}/{request_id}/status"
+        duration_test_url = f"{self.api_url}/alkong_duration_testtest/{request_id}/status"
+        start_time = datetime.now()
+        poll_count = 0
 
-#         async with httpx.AsyncClient(timeout=30.0) as client:
-#             while True:
-#                 try:
-#                     poll_count += 1
-#                     response = await client.get(duration_test_url, headers=self.headers)
-#                     response.raise_for_status()
-#                     result = response.json()
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            while True:
+                try:
+                    poll_count += 1
+                    response = await client.get(target_url, headers=self.headers)
+                    response.raise_for_status()
+                    result = response.json()
 
-#                     if result['status'] == "COMPLETED":
-#                         end_time = datetime.now()
-#                         elapsed_time = (end_time - start_time).total_seconds()
-#                         # result['results']['polling_info'] = {
-#                         #     'elapsed_time': elapsed_time,
-#                         #     'poll_count': poll_count
-#                         # }
-#                         print(json.dumps(result, indent=4, ensure_ascii=False))
-#                         return result['results']
-#                     elif result['status'] == "FAILURE":
-#                         raise Exception(f"API 요청 실패: {result.get('failure_reason', 'Unknown error')}")
+                    if result['status'] == "COMPLETED":
+                        end_time = datetime.now()
+                        elapsed_time = (end_time - start_time).total_seconds()
+                        print(json.dumps(result, indent=4, ensure_ascii=False))
+                        return result['results']
+                    elif result['status'] == "FAILURE":
+                        raise Exception(f"API 요청 실패: {result.get('failure_reason', 'Unknown error')}")
                     
-#                     await asyncio.sleep(self.polling_interval)
+                    await asyncio.sleep(self.polling_interval)
                 
-#                 except httpx.HTTPStatusError as e:
-#                     error_text = response.text
-#                     raise Exception(f"Failed to get api: Status {response.status_code}, Error: {error_text}")
-#                 except httpx.RequestError as e:
-#                     raise Exception(f"API 요청 중 오류 발생: Network error: {str(e)}")
+                except httpx.HTTPStatusError as e:
+                    error_text = response.text
+                    raise Exception(f"Failed to get api: Status {response.status_code}, Error: {error_text}")
+                except httpx.RequestError as e:
+                    raise Exception(f"API 요청 중 오류 발생: Network error: {str(e)}")
 
-#     async def _process_single_request_httpx(self, input_data):
-#         try:
-#             # POST 요청 시작 시간
-#             post_start = datetime.now()
-#             request_id = await self.post_request_httpx(input_data)
-#             post_end = datetime.now()
-#             post_time = (post_end - post_start).total_seconds()
-#             print(f"\nPOST 요청 소요 시간: {post_time:.3f}초")
+    async def _process_single_request_httpx(self, input_data):
+        try:
+            # POST 요청 시작 시간
+            post_start = datetime.now()
+            request_id = await self.post_request_httpx(input_data)
+            post_end = datetime.now()
+            post_time = (post_end - post_start).total_seconds()
+            print(f"\nPOST 요청 소요 시간: {post_time:.3f}초")
             
-#             # 대기 시작 시간
-#             wait_start = datetime.now()
-#             await asyncio.sleep(1)  # POST 요청 후 1초 대기
-#             wait_end = datetime.now()
-#             wait_time = (wait_end - wait_start).total_seconds()
-#             print(f"의도적 대기 시간: {wait_time:.3f}초")
+            # 대기 시작 시간
+            wait_start = datetime.now()
+            await asyncio.sleep(1)  # POST 요청 후 1초 대기
+            wait_end = datetime.now()
+            wait_time = (wait_end - wait_start).total_seconds()
+            print(f"의도적 대기 시간: {wait_time:.3f}초")
             
-#             # GET 요청 시작
-#             get_start = datetime.now()
-#             result = await self.get_request_httpx(request_id)
-#             get_end = datetime.now()
-#             get_time = (get_end - get_start).total_seconds()
-#             print(f"GET 요청 소요 시간: {get_time:.3f}초")
+            # GET 요청 시작
+            get_start = datetime.now()
+            result = await self.get_request_httpx(request_id)
+            get_end = datetime.now()
+            get_time = (get_end - get_start).total_seconds()
+            print(f"GET 요청 소요 시간: {get_time:.3f}초")
             
-#             return result
-#         except Exception as e:
-#             raise Exception(f"API 요청 중 오류 발생: {str(e)}")
+            return result
+        except Exception as e:
+            raise Exception(f"API 요청 중 오류 발생: {str(e)}")
 
-#     def post_multiple_request_httpx(self, input_data: dict):
-#         """여러 데이터를 비동기로 평가 요청합니다. (httpx 사용)"""
-#         try:
-#             print("\n=== 요청 처리 시작 (httpx) ===")
-#             start_time = datetime.now()
-#             print(f"시작 시간: {start_time.strftime('%H:%M:%S.%f')[:-3]}")
+    def post_multiple_request_httpx(self, input_data: dict):
+        """여러 데이터를 비동기로 평가 요청합니다. (httpx 사용)"""
+        try:
+            print("\n=== 요청 처리 시작 (httpx) ===")
+            start_time = datetime.now()
+            print(f"시작 시간: {start_time.strftime('%H:%M:%S.%f')[:-3]}")
             
-#             loop = asyncio.new_event_loop()
-#             asyncio.set_event_loop(loop)
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
             
-#             items = [input_data]
-#             tasks = [self._process_single_request_httpx(item) for item in items]
-#             results = loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
+            items = [input_data]
+            tasks = [self._process_single_request_httpx(item) for item in items]
+            results = loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
             
-#             successful_results = []
-#             for idx, result in enumerate(results):
-#                 if isinstance(result, Exception):
-#                     print(f"Error processing item {idx}: {str(result)}")
-#                 else:
-#                     successful_results.append(result)
+            successful_results = []
+            for idx, result in enumerate(results):
+                if isinstance(result, Exception):
+                    print(f"Error processing item {idx}: {str(result)}")
+                else:
+                    successful_results.append(result)
             
-#             end_time = datetime.now()
-#             elapsed_time = (end_time - start_time).total_seconds()
-#             print(f"종료 시간: {end_time.strftime('%H:%M:%S.%f')[:-3]}")
-#             print(f"총 소요 시간: {elapsed_time:.3f}초")
+            end_time = datetime.now()
+            elapsed_time = (end_time - start_time).total_seconds()
+            print(f"종료 시간: {end_time.strftime('%H:%M:%S.%f')[:-3]}")
+            print(f"총 소요 시간: {elapsed_time:.3f}초")
             
-#             # 폴링 정보 출력
-#             for idx, result in enumerate(successful_results):
-#                 if 'polling_info' in result:
-#                     print(f"요청 {idx+1} 폴링 횟수: {result['polling_info']['poll_count']}회")
+            # 폴링 정보 출력
+            for idx, result in enumerate(successful_results):
+                if 'polling_info' in result:
+                    print(f"요청 {idx+1} 폴링 횟수: {result['polling_info']['poll_count']}회")
             
-#             print("=== 요청 처리 완료 (httpx) ===\n")
+            print("=== 요청 처리 완료 (httpx) ===\n")
             
-#             return successful_results
+            return successful_results
             
-#         finally:
-#             loop.close()
+        finally:
+            loop.close()
 
 
-# # async def run_tests():
-# #     chatbot_api = ChatbotAPI(polling_interval=0.3)
-# #     # input_data = {
-# #     #     "inputData": {
-# #     #         "test": "test"
-# #     #     }
-# #     # }
+async def run_tests():
+    chatbot_api = ChatbotAPI(polling_interval=0.3)
+    # input_data = {
+    #     "inputData": {
+    #         "test": "test"
+    #     }
+    # }
 
-# #     with open('test_data/첫인사생성.json', 'r') as f:
-# #         input_data = json.load(f)
-# #     input_data = {
-# #         "inputData": input_data
-# #     }
+    with open('chatbot_test_data/valid_test_data/첫인사생성.json', 'r') as f:
+        input_data = json.load(f)
+    input_data = {
+        "inputData": input_data
+    }
     
-# #     # # aiohttp 버전 테스트
-# #     print("\n=== aiohttp 버전 테스트 ===")
-# #     results = await chatbot_api._process_single_request(input_data)
+    # # # aiohttp 버전 테스트
+    # print("\n=== aiohttp 버전 테스트 ===")
+    # results = await chatbot_api._process_single_request(input_data)
     
-# #     # httpx 버전 테스트
-# #     print("\n=== httpx 버전 테스트 ===")
-# #     results_httpx = await chatbot_api._process_single_request_httpx(input_data)
+    # httpx 버전 테스트
+    print("\n=== httpx 버전 테스트 ===")
+    results_httpx = await chatbot_api._process_single_request_httpx(input_data)
 
-# # if __name__ == "__main__":
-# #     loop = asyncio.new_event_loop()
-# #     asyncio.set_event_loop(loop)
-# #     try:
-# #         loop.run_until_complete(run_tests())
-# #     finally:
-# #         loop.close()
+# if __name__ == "__main__":
+#     loop = asyncio.new_event_loop()
+#     asyncio.set_event_loop(loop)
+#     try:
+#         loop.run_until_complete(run_tests())
+#     finally:
+#         loop.close()
