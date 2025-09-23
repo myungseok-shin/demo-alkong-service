@@ -51,12 +51,12 @@ class ChatbotAPI:
         return response_text
 
 
-# if __name__ == "__main__":
-#     chatbot_api = ChatbotAPI()
-#     with open('chatbot_test_data/valid_test_data/첫인사생성.json', 'r') as f:
-#         input_data = json.load(f)
-#     input_data = {
-#         "inputData": input_data
-#     }
-#     results = asyncio.run(chatbot_api.post_via_sse(input_data))
-#     print(results)
+if __name__ == "__main__":
+    chatbot_api = ChatbotAPI()
+    with open('chatbot_test_data/valid_test_data/첫인사생성.json', 'r') as f:
+        input_data = json.load(f)
+    input_data = {
+        "inputData": input_data
+    }
+    results = asyncio.run(chatbot_api.post_via_sse(input_data))
+    print(results)

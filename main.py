@@ -242,8 +242,15 @@ if 'current_history' not in st.session_state:
     st.session_state.current_history = []
 if 'assessment_data' not in st.session_state:
     st.session_state.assessment_data = [
-        {"assessmentId": i, "isAssessmentConfirmed": False, "isAssessmentCompleted": False} 
-        for i in range(1, 6)
+        {"assessmentId": 10, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 20, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 30, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 31, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 32, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 33, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 40, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 41, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+        {"assessmentId": 50, "isAssessmentConfirmed": False, "isAssessmentCompleted": False}
     ]
 if 'issue_data' not in st.session_state:
     st.session_state.issue_data = []  # API 스펙에 맞춰 빈 배열로 초기화
@@ -321,6 +328,45 @@ display_messages(st.session_state.messages, chat_placeholder)
 # API 요청 데이터 생성 함수
 def create_input_data(user_name, user_age, user_school, user_grade, user_class, 
                      current_phase, current_history, is_first_visit, user_message=""):
+    # 첫 인사일 때는 초기 sessionData 사용
+    if is_first_visit:
+        session_data = {
+            "currentPhase": current_phase,
+            "problemData": {
+                "observationProblem": [],
+                "confirmedProblem": []
+            },
+            "issueData": [],
+                "assessmentData": [
+                    {"assessmentId": 10, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 20, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 30, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 31, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 32, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 33, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 40, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 41, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
+                    {"assessmentId": 50, "isAssessmentConfirmed": False, "isAssessmentCompleted": False}
+                ],
+            "attentionLevel": 1
+        }
+    else:
+        # 이전 응답의 sessionData 사용
+        # 마지막 AI 메시지의 metadata를 찾음
+        last_ai_message = None
+        for msg in reversed(st.session_state.messages):
+            if msg["role"] == "assistant" and "metadata" in msg:
+                last_ai_message = msg
+                break
+        
+        session_data = {
+            "currentPhase": last_ai_message["metadata"]["next_phase"] if last_ai_message else current_phase,
+            "problemData": st.session_state.problem_data,
+            "issueData": st.session_state.issue_data,
+            "assessmentData": st.session_state.assessment_data,
+            "attentionLevel": last_ai_message["metadata"]["attention_level"] if last_ai_message else 1
+        }
+
     return {
         "inputData": {
             "chatRoomId": 123456778,
@@ -348,22 +394,10 @@ def create_input_data(user_name, user_age, user_school, user_grade, user_class,
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "message": user_message
             },
-            "sessionData": {
-                "currentPhase": current_phase,
-                "problemData": {
-                    "observationProblem": [],
-                    "confirmedProblem": []
-                },  # API 스펙과 동일한 구조 유지
-                "issueData": [],  # API 스펙에 맞춰 빈 배열로 초기화
-                "assessmentData": [
-                    {"assessmentId": i, "isAssessmentConfirmed": False, "isAssessmentCompleted": False} 
-                    for i in range(1, 6)
-                ],
-                "attentionLevel": 1
-            },
+            "sessionData": session_data,
             "flagData": {
                 "isFirstVisit": is_first_visit,
-                "isConversationContinued": True,
+                "isConversationContinued": is_first_visit,  # 첫 턴에만 True, 이후에는 False
                 "isFinishedConversation": False,
                 "isSuicideTendencyDetected": False
             },
@@ -452,7 +486,8 @@ if not st.session_state.messages:
                 # 현재 대화 히스토리에 AI 응답 추가
                 st.session_state.current_history.append({
                     "role": "ai",
-                    "message": ai_message
+                    "message": ai_message,
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 })
                 
                 # 세션 상태 업데이트
@@ -544,11 +579,13 @@ if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.sessio
                 # 대화 히스토리에 사용자 메시지와 AI 응답 추가
                 st.session_state.current_history.append({
                     "role": "user",
-                    "message": prompt
+                    "message": prompt,
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 })
                 st.session_state.current_history.append({
                     "role": "ai",
-                    "message": ai_message
+                    "message": ai_message,
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 })
                 
                 # 세션 상태 업데이트

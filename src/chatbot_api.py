@@ -24,33 +24,91 @@ class ChatbotAPI:
     def post_request_via_sse(self, input_data):
         target_url = f"{self.api_url}/{self.endpoint}/sse"
 
+        # local_test 디렉토리가 없으면 생성
+        os.makedirs('local_test', exist_ok=True)
+        
+        # 요청-응답 쌍을 저장할 데이터 구조
+        chat_data = {
+            'timestamp': datetime.now().isoformat(),
+            'input': input_data,
+            'output': None  # 응답이 오면 여기에 저장
+        }
+        
+        # 기존 대화 내용 로드
+        chat_log_file = 'local_test/chat_history.json'
+        try:
+            with open(chat_log_file, 'r', encoding='utf-8') as f:
+                chat_history = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            chat_history = []
+
         data = {
             "params_json": json.dumps(input_data, ensure_ascii=False),
             "callback_url": ""
         }
 
-        response = requests.post(target_url, headers=self.headers, data=data)
-        response_text = response.text
+        try:
+            # 먼저 히스토리에 입력 데이터 저장
+            chat_history.append(chat_data)
+            with open(chat_log_file, 'w', encoding='utf-8') as f:
+                json.dump(chat_history, f, ensure_ascii=False, indent=2)
+
+            response = requests.post(target_url, headers=self.headers, data=data)
+            response.raise_for_status()  # HTTP 에러 체크
+            response_text = response.text
+            
+            print("\n=== 원본 응답 ===")
+            print(response_text)
+            print("=" * 50)
+            
+            # response: 부분을 제거하고 JSON 파싱
+            if response_text.startswith("response:"):
+                json_str = response_text[len("response:"):].strip()
+                try:
+                    response_data = json.loads(json_str)
+                    print("\nPOST 응답 데이터 (parsed):")
+                    print(json.dumps(response_data, indent=2, ensure_ascii=False))
+                    print("-" * 50)
+                    # results.outputData와 totalDuration을 합쳐서 반환
+                    output_data = response_data.get('results', {}).get('outputData', {})
+                    output_data['totalDuration'] = response_data.get('results', {}).get('totalDuration', 0)
+                    
+                    # sessionData 추출 및 업데이트
+                    session_data = response_data.get('results', {}).get('sessionData', {})
+                    if session_data:
+                        # input_data에 sessionData 업데이트
+                        if isinstance(input_data, dict) and 'inputData' in input_data:
+                            input_data['inputData']['sessionData'] = session_data
+                        else:
+                            input_data['sessionData'] = session_data
+                    
+                    # 응답 데이터를 chat_data에 저장
+                    chat_data['output'] = output_data
+                    chat_data['session_data'] = session_data  # sessionData도 따로 저장
+                    
+                    # 히스토리의 마지막 항목(방금 저장한 입력)을 업데이트
+                    chat_history[-1] = chat_data
+                    
+                    # 전체 히스토리를 파일로 저장
+                    with open(chat_log_file, 'w', encoding='utf-8') as f:
+                        json.dump(chat_history, f, ensure_ascii=False, indent=2)
+
+                    return output_data
+                except json.JSONDecodeError as e:
+                    print(f"JSON 파싱 에러: {str(e)}")
+                    print("원본 응답:")
+                    print(response_text)
+                    raise
         
-        # response: 부분을 제거하고 JSON 파싱
-        if response_text.startswith("response:"):
-            json_str = response_text[len("response:"):].strip()
-            try:
-                response_data = json.loads(json_str)
-                print("\nPOST 응답 데이터 (parsed):")
-                print(json.dumps(response_data, indent=2, ensure_ascii=False))
-                print("-" * 50)
-                # results.outputData와 totalDuration을 합쳐서 반환
-                output_data = response_data.get('results', {}).get('outputData', {})
-                output_data['totalDuration'] = response_data.get('results', {}).get('totalDuration', 0)
-                return output_data
-            except json.JSONDecodeError as e:
-                print(f"JSON 파싱 에러: {str(e)}")
-                print("원본 응답:")
-                print(response_text)
-                raise
-        
-        return response_text
+            print("\n=== 예상치 못한 응답 형식 ===")
+            print(response_text)
+            print("=" * 50)
+            raise Exception("응답이 'response:' 로 시작하지 않습니다.")
+        except requests.RequestException as e:
+            print(f"\n=== API 요청 실패 ===")
+            print(f"에러: {str(e)}")
+            print("=" * 50)
+            raise
 
     async def post_request(self, input_data):
         target_url = f"{self.api_url}/{self.endpoint}"
