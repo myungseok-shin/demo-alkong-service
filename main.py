@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 from src.chatbot_api import ChatbotAPI
+from src.summary_api import ChatSummaryAPI
 from datetime import datetime
 import base64
 from pathlib import Path
@@ -263,15 +264,85 @@ if 'last_displayed_message_index' not in st.session_state:
     st.session_state.last_displayed_message_index = 0
 if 'is_processing' not in st.session_state:
     st.session_state.is_processing = False
+if 'session_data' not in st.session_state:
+    st.session_state.session_data = {}
+if 'current_phase' not in st.session_state:
+    st.session_state.current_phase = 1
+if 'next_phase' not in st.session_state:
+    st.session_state.next_phase = 1
+if 'summary_results' not in st.session_state:
+    st.session_state['summary_results'] = None
+if 'session_id' not in st.session_state:
+    st.session_state.session_id = int(time.time() * 1000000)
+
+def create_summary_input_data():
+# 마지막 AI 메시지의 metadata를 찾음
+    last_ai_message = None
+    for msg in reversed(st.session_state.messages):
+        if msg["role"] == "assistant" and "metadata" in msg:
+            last_ai_message = msg
+            break
+    session_data = {
+        "currentPhase": last_ai_message["metadata"]["next_phase"] if last_ai_message else st.session_state.current_phase,
+        "problemData": st.session_state.problem_data,
+        "issueData": st.session_state.issue_data,
+        "assessmentData": st.session_state.assessment_data,
+        "attentionLevel": last_ai_message["metadata"]["attention_level"] if last_ai_message else 1
+    }
+    return {
+        "inputData": {
+            "chatRoomId": st.session_state.session_id,
+            "userId": 123456778,
+            "userInfo": {
+                "name": st.session_state.user_name,
+                "age": st.session_state.user_age,
+                "address": "서울시 중구 명동 제네시스랩",
+                "phoneNumber": "010-1234-5678",
+                "email": "ch.shin@genesislab.com",
+                "schoolName": st.session_state.user_school,
+                "grade": st.session_state.user_grade,
+                "class": st.session_state.user_class,
+                "homeroomTeacher": {
+                    "name": "신명석",
+                    "phoneNumber": "010-9876-5432",
+                    "email": "ms.shin@genesislab.com"
+                }
+            },
+            "conversationHistory": st.session_state.current_history,
+            "sessionData": session_data | {"nextPhase" : last_ai_message["metadata"]["next_phase"]},
+            "personaId": 1
+        }
+    }
+
 
 # 사이드바 - 사용자 정보 입력
 with st.sidebar:
     st.header("🧑‍💻 사용자 정보")
     user_name = st.text_input("이름", value="김춘식")
-    user_age = st.number_input("나이", min_value=1, max_value=100, value=15)
+    user_age = st.number_input("나이", min_value=1, max_value=100, value=10)
     user_school = st.text_input("학교", value="제네시스랩 초등학교")
     user_grade = st.number_input("학년", min_value=1, max_value=6, value=3)
     user_class = st.number_input("반", min_value=1, max_value=20, value=4)
+    st.session_state['user_name'] = user_name
+    st.session_state['user_age'] = user_age
+    st.session_state['user_school'] = user_school
+    st.session_state['user_grade'] = user_grade
+    st.session_state['user_class'] = user_class
+    
+
+    if st.button("요약 생성"):
+        if len(st.session_state.messages) > 2:
+            chat_summary_api = ChatSummaryAPI()
+            input_data = create_summary_input_data()
+            st.session_state['summary_results'] = chat_summary_api.post_request_via_sse(input_data)
+            if st.session_state['summary_results']:
+                st.success("요약 생성 완료!")
+                st.markdown("summary and report 페이지에서 요약을 확인하세요.")
+                # st.json(st.session_state['summary_results'], expanded=True)
+            else:
+                st.error("요약 생성 실패!")
+        else:
+            st.warning("먼저 대화를 진행해주세요.")
 
 # 메타데이터 표시 함수
 def display_metadata(metadata, is_polling=False):
@@ -432,7 +503,6 @@ if not st.session_state.messages:
                 is_first_visit=st.session_state.is_first_visit
             )
             
-            
             response = st.session_state.chatbot_api.post_request_via_sse(input_data)
             print("\n=== 응답 데이터 확인 ===")
             print(f"응답 타입: {type(response)}")
@@ -492,6 +562,7 @@ if not st.session_state.messages:
                 
                 # 세션 상태 업데이트
                 st.session_state.current_phase = next_phase
+                st.session_state.session_data = response['sessionData']
                 st.session_state.is_first_visit = False
 
 # 사용자 입력 (처리 중일 때는 비활성화)
@@ -502,7 +573,6 @@ if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.sessio
     st.session_state.messages.append({"role": "user", "content": prompt})
     # 사용자 입력 로깅
 
-    
     # 사용자 메시지 즉시 표시
     chat_placeholder.empty()
     display_messages(st.session_state.messages, chat_placeholder, is_polling=True)
@@ -527,7 +597,6 @@ if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.sessio
     with st.spinner("생각 중..."):
             
             response = st.session_state.chatbot_api.post_request_via_sse(input_data)
-            
             
             # response: 형식의 문자열을 파싱한 후에도 로깅
             if isinstance(response, str) and response.startswith("response:"):
