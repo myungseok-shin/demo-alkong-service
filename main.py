@@ -323,11 +323,26 @@ with st.sidebar:
     user_school = st.text_input("학교", value="제네시스랩 초등학교")
     user_grade = st.number_input("학년", min_value=1, max_value=6, value=3)
     user_class = st.number_input("반", min_value=1, max_value=20, value=4)
+    
+    st.header("🤖 AI 페르소나 설정")
+    ai_personality = st.text_area(
+        "AI 성격",
+        value="대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감",
+        height=150
+    )
+    ai_formality = st.text_input(
+        "말투",
+        value="반말",
+        help="예: 반말, 존댓말, 친근한 말투 등"
+    )
+    
     st.session_state['user_name'] = user_name
     st.session_state['user_age'] = user_age
     st.session_state['user_school'] = user_school
     st.session_state['user_grade'] = user_grade
     st.session_state['user_class'] = user_class
+    st.session_state['ai_personality'] = ai_personality
+    st.session_state['ai_formality'] = ai_formality
     
 
     if st.button("요약 생성"):
@@ -477,8 +492,8 @@ def create_input_data(user_name, user_age, user_school, user_grade, user_class,
                     "id": 1,
                     "name": "김알콩",
                     "gender": "여성",
-                    "personality": "대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감",
-                    "formality": "반말"
+                    "personality": st.session_state.get('ai_personality', "대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감"),
+                    "formality": st.session_state.get('ai_formality', "반말")
                 }
             }
         }
