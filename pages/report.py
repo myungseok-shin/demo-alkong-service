@@ -132,7 +132,7 @@ with col2:
 # 리포트 보기 버튼은 별도로 배치
 if st.session_state.get('report_results'):
     st.markdown("---")
-    if st.button("📄 상세 리포트 보기", type="primary"):
+    if st.button("📄 상세 리포트 보기"):
         display_report_page(st.session_state['report_results'])
 
 if not st.session_state.get('summary_results'):
