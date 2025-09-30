@@ -245,6 +245,28 @@ st.markdown("""
     ::-webkit-scrollbar-thumb:hover {
         background: #9CA3AF;
     }
+
+    /* 응답 데이터 드롭다운 스타일 */
+    .response-data-container {
+        margin-top: 10px;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #F9FAFB;
+    }
+    
+    .response-data-header {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+    
+    .response-data-content {
+        font-family: monospace;
+        font-size: 14px;
+        white-space: pre-wrap;
+        color: #1F2937;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -579,12 +601,19 @@ if not st.session_state.messages:
                     display_previous_messages(st.session_state.messages[:-1], chat_placeholder)
                     # 새 메시지 스트리밍
                     with st.chat_message("assistant", avatar=AI_AVATAR):
-                        message_placeholder = st.empty()
-                        for j in range(len(ai_message) + 1):
-                            message_placeholder.markdown(ai_message[:j] + "▌")
-                            time.sleep(0.02)
-                        message_placeholder.markdown(ai_message)
-                        display_metadata(new_message["metadata"], is_polling=False)
+                        col1, col2 = st.columns([0.9, 0.1])
+                        with col1:
+                            message_placeholder = st.empty()
+                            for j in range(len(ai_message) + 1):
+                                message_placeholder.markdown(ai_message[:j] + "▌")
+                                time.sleep(0.02)
+                            message_placeholder.markdown(ai_message)
+                            display_metadata(new_message["metadata"], is_polling=False)
+                        
+                        with col2:
+                            with st.expander("🔍", expanded=False):
+                                st.markdown("### 응답 데이터")
+                                st.json(response)
                 
                 # 현재 대화 히스토리에 AI 응답 추가
                 st.session_state.current_history.append({
@@ -671,12 +700,19 @@ if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.sessio
                     display_previous_messages(st.session_state.messages[:-1], chat_placeholder)
                     # 새 메시지 스트리밍
                     with st.chat_message("assistant", avatar=AI_AVATAR):
-                        message_placeholder = st.empty()
-                        for j in range(len(ai_message) + 1):
-                            message_placeholder.markdown(ai_message[:j] + "▌")
-                            time.sleep(0.02)
-                        message_placeholder.markdown(ai_message)
-                        display_metadata(new_message["metadata"], is_polling=False)
+                        col1, col2 = st.columns([0.9, 0.1])
+                        with col1:
+                            message_placeholder = st.empty()
+                            for j in range(len(ai_message) + 1):
+                                message_placeholder.markdown(ai_message[:j] + "▌")
+                                time.sleep(0.02)
+                            message_placeholder.markdown(ai_message)
+                            display_metadata(new_message["metadata"], is_polling=False)
+                        
+                        with col2:
+                            with st.expander("🔍", expanded=False):
+                                st.markdown("### 응답 데이터")
+                                st.json(response)
                 
                 # 대화 히스토리에 사용자 메시지와 AI 응답 추가
                 st.session_state.current_history.append({
