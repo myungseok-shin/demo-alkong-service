@@ -424,9 +424,16 @@ def display_previous_messages(messages, chat_placeholder):
     for message in messages:
         if message["role"] == "assistant":
             with st.chat_message(message["role"], avatar=AI_AVATAR):
-                st.write(message["content"])
-                if "metadata" in message:
-                    display_metadata(message["metadata"], is_polling=False)
+                col1, col2 = st.columns([0.9, 0.1])
+                with col1:
+                    st.write(message["content"])
+                    if "metadata" in message:
+                        display_metadata(message["metadata"], is_polling=False)
+                with col2:
+                    if "response_data" in message:
+                        with st.expander("🔍", expanded=False):
+                            st.markdown("### 응답 데이터")
+                            st.json(message["response_data"])
         else:
             with st.chat_message(message["role"], avatar=USER_AVATAR):
                 st.write(message["content"])
@@ -437,9 +444,16 @@ def display_messages(messages, chat_placeholder, is_polling=False):
         for message in messages:
             if message["role"] == "assistant":
                 with st.chat_message(message["role"], avatar=AI_AVATAR):
-                    st.write(message["content"])
-                    if "metadata" in message:
-                        display_metadata(message["metadata"], is_polling)
+                    col1, col2 = st.columns([0.9, 0.1])
+                    with col1:
+                        st.write(message["content"])
+                        if "metadata" in message:
+                            display_metadata(message["metadata"], is_polling)
+                    with col2:
+                        if "response_data" in message:
+                            with st.expander("🔍", expanded=False):
+                                st.markdown("### 응답 데이터")
+                                st.json(message["response_data"])
             else:
                 with st.chat_message(message["role"], avatar=USER_AVATAR):
                     st.write(message["content"])
@@ -590,7 +604,8 @@ if not st.session_state.messages:
                         "attention_level": attention_level,
                         "is_finished": response['flagData']['isFinishedConversation'],
                         "is_suicidal": response['flagData']['isSuicidalTendencyDetected']
-                    }
+                    },
+                    "response_data": response
                 }
                 st.session_state.messages.append(new_message)
                 
@@ -689,7 +704,8 @@ if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.sessio
                         "attention_level": attention_level,
                         "is_finished": response['flagData']['isFinishedConversation'],
                         "is_suicidal": response['flagData']['isSuicidalTendencyDetected']
-                    }
+                    },
+                    "response_data": response
                 }
                 st.session_state.messages.append(new_message)
                 
