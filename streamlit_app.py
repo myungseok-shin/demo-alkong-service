@@ -189,11 +189,19 @@ st.markdown("""
     .stChatInputContainer {
         position: fixed !important;
         bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 1200px !important;
         background: white !important;
         padding: 20px !important;
         border-top: 1px solid #E5E7EB !important;
+        z-index: 1 !important;
+    }
+    
+    .stChatInputContainer > div {
+        max-width: 800px !important;
+        margin: 0 auto !important;
     }
     
     .stChatInputContainer textarea {
@@ -203,6 +211,12 @@ st.markdown("""
         font-size: 15px !important;
         box-shadow: none !important;
         resize: none !important;
+        width: 100% !important;
+    }
+    
+    /* 메인 컨텐츠 영역 패딩 추가 */
+    .main .block-container {
+        padding-bottom: 100px !important;
     }
     
     .stChatInputContainer textarea:focus {
