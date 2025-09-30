@@ -194,11 +194,18 @@ st.markdown("""
         bottom: 0 !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        width: 80% !important;
+        width: 100% !important;
         max-width: 800px !important;
         background: white !important;
         padding: 20px !important;
         border-top: 1px solid #E5E7EB !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* 입력창 컨테이너 내부 정렬 */
+    .stChatInputContainer > div {
+        max-width: 760px !important;
         margin: 0 auto !important;
     }
     
