@@ -445,7 +445,7 @@ def display_messages(messages, chat_placeholder, is_polling=False):
                         display_metadata(message["metadata"], is_polling)
                     if "response_data" in message:
                         with st.expander("🔍 응답 데이터 보기", expanded=False):
-                            st.json(message["response_data"])
+                            st.json(message["response_data"]["assessmentData"])
             else:
                 with st.chat_message(message["role"], avatar=USER_AVATAR):
                     st.write(message["content"])
