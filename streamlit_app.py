@@ -186,26 +186,23 @@ st.markdown("""
     }
     
     /* 입력창 스타일링 */
-    .stChatInputContainer {
+    div[data-testid="stChatInput"] {
         position: fixed !important;
         bottom: 0 !important;
-        right: 20px !important;
-        width: 400px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 800px !important;
         background: white !important;
         padding: 20px !important;
         border-top: 1px solid #E5E7EB !important;
-        border-left: 1px solid #E5E7EB !important;
-        border-right: 1px solid #E5E7EB !important;
-        border-radius: 10px 10px 0 0 !important;
-        z-index: 1 !important;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1) !important;
     }
     
-    .stChatInputContainer > div {
-        max-width: 800px !important;
-        margin: 0 auto !important;
+    div[data-testid="stChatInput"] > div {
+        width: 100% !important;
     }
     
-    .stChatInputContainer textarea {
+    div[data-testid="stChatInput"] textarea {
         border-radius: 25px !important;
         border: 1px solid #E5E7EB !important;
         padding: 12px 20px !important;
@@ -213,6 +210,12 @@ st.markdown("""
         box-shadow: none !important;
         resize: none !important;
         width: 100% !important;
+        background: #f8f9fa !important;
+    }
+    
+    /* 채팅 영역 하단 여백 */
+    .stChatMessageContainer {
+        margin-bottom: 80px !important;
     }
     
     /* 메인 컨텐츠 영역 패딩 추가 */
