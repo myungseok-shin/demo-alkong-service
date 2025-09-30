@@ -1,0 +1,126 @@
+{
+    "inputData": {
+        "userInfo": {
+        "userId": 2345,
+        "userName": "John Doe",
+        "firstLanguage": "jp"
+        },
+        "textbookInfo": {
+        "textbookName": "Anytime Korean Beginning 1",
+        "lessonInfo": {
+            "lessonNum": 3,
+            "essayTopic": "Direction: Imagine that, using your hand gesture, you are introducing the THREE classmates you had conversation with in < Step 1>. Write a narrative that introduces the THREE classmates, including the following information."
+        }
+        },
+        "evalInfo":{
+            "checkList": {
+                "AKE0123123": "An introductory announcement to invite your friends",
+                "AKE0123124": "Date and time of the party",
+                "AKE0123125": "Detailed directions or a simple map to your new place from a public site",
+                "AKE0123126": "What is expected at the party: food and drinks, games, etc.",
+                "AKE0123127": "A list of gift items you wish to receive from your friends",
+                "AKE0123128": "Include ~은/~ㄴ 다음에, ~는지/~은지/~ㄴ지, ~(으)면 되다, and ~는 길에 in your writing."
+            },
+            "rubric": [
+                {
+                "criteriaDescription": "Did I complete the '(In Korean)' part of the Passage section, addressing all 9 items from Checklist 1: each one item for numbers 1 through 5, and 4 items for number 6?",
+                "ratings": [
+                    {"point": 5, "name": "Completed 8-9 items."},
+                    {"point": 4, "name": "Completed 6-7 items."},
+                    {"point": 3, "name": "Completed 4-5 items."},
+                    {"point": 2, "name": "Completed 3 items."},
+                    {"point": 1, "name": "Completed 1-2 items."},
+                    {"point": 0, "name": "Completed no items."}
+                ]
+                },
+                {
+                "criteriaDescription": "Did I complete the '(In English)' part of the Passage section, addressing all 9 items from Checklist 1: each one item for numbers 1 through 5, and 4 items for number 6?",
+                "ratings": [
+                    {"point": 5, "name": "Completed 8-9 items."},
+                    {"point": 4, "name": "Completed 6-7 items."},
+                    {"point": 3, "name": "Completed 4-5 items."},
+                    {"point": 2, "name": "Completed 3 items."},
+                    {"point": 1, "name": "Completed 1-2 items."},
+                    {"point": 0, "name": "Completed no items."}
+                ]
+                },
+                {
+                "criteriaDescription": "Did I create 5 correct reading comprehension questions in the Quiz section, based on my Korean writing in the Passage section?",
+                "ratings": [
+                    {"point": 5, "name": "Created 5-6 questions correctly."},
+                    {"point": 4, "name": "Created 4 questions correctly."},
+                    {"point": 3, "name": "Created 3 questions correctly."},
+                    {"point": 2, "name": "Created 2 questions correctly."},
+                    {"point": 1, "name": "Created 1 question correctly."},
+                    {"point": 0, "name": "Created no questions correctly."}
+                ]
+                },
+                {
+                "criteriaDescription": "Did I provide the correct answers to 5 reading comprehension questions at the Quiz section, based on my Korean writing in the Passage section?",
+                "ratings": [
+                    {"point": 5, "name": "Provided 5-6 answers correctly."},
+                    {"point": 4, "name": "Provided 4 answers correctly."},
+                    {"point": 3, "name": "Provided 3 answers correctly."},
+                    {"point": 2, "name": "Provided 2 answers correctly."},
+                    {"point": 1, "name": "Provided 1 answer correctly."},
+                    {"point": 0, "name": "Provided no answers correctly."}
+                ]
+                },
+                {
+                "criteriaDescription": "Did I complete <SELF-REFLECTION> appropriately?",
+                "ratings": [
+                    {"point": 4, "name": "Completed Number 1 and 2 and the points made are clear."},
+                    {"point": 3, "name": "Completed Number 1 and 2 and the points made are somewhat clear."},
+                    {"point": 2, "name": "Completed Number 1 and 2 with limited clarity, OR completed only one with clarity."},
+                    {"point": 1, "name": "Attempted Number 1 or 2 but the answers are not clear."},
+                    {"point": 0, "name": "Completed neither number 1 nor number 2, OR the answers are irrelevant or uncomprehensible."}
+                ]
+                }
+            ]
+        },
+        "scriptData": {
+        "userScript":{
+            "essayScript": "이 친구는 제시카이에요. 한국영화클럽 멤버이에요. 미국 사람요. 학생 한국대학교예요. 이 학년. 그리고 저 친구는 피터이에요. 저 친구도 한국영화클럽 메버가 아니에요. 저 친구도 미국 사람이에요.  뉴욕대학교 학생이에요. 저 친구도 일 학년이에요.  그리고 이 친구는 존이에요. 이 친구도 한국영화클럽 메버예요. 이 친구는 중국 사람이에요.  서울대학교 학생이에요. 이 친구도 일 학년이에요.",
+            "questions":[
+                "제시카는 어느 대학교에 다녀요?",
+                "제시카는 한국영화클럽 멤버예요?",
+                "피터는 몇 학년이에요?",
+                "피터는 어느 대학교에 다녀요?",
+                "존는 뉴욕 대학교 학생이에요?",
+                "존는 몇 학년이에요?"
+            ],
+            "answers":[
+                "한국 대학교에 다녀요.",
+                "아니에요.",
+                "일학년이에요.",
+                "뉴욕 대학교이에요.",
+                "서울대학교 핟생이에요.",
+                "삼 학년이엥요."
+            ],
+            "stage3Script":{
+                "firstScript": "Looking at the AI-revised script, I see there were several errors in my answers. First, by correcting '존는' to '존은', '핟생이에요' to '학생이에요', '대학교이에요' to '대학교예요', and '이엥요' to '이에요', I was able to fix my grammatical and spelling mistakes. Also, through the AI script, I could re-check and correct the information about whether Jessica is a member of the Korean film club and what grade John is in. The AI script corrected the factual basis of the answers based on the essay content it generated. Overall, it seems my sentences were revised to be more natural and accurate.",
+                "secondScript": "The AI was very thorough in its review. I was impressed that it caught not only my spelling and grammatical errors but also the logical inconsistencies between my own essay and answers, which I had completely missed. However, I did notice that it changed a detail from my original story—it stated that John was not a member of the film club, whereas I had written that he was. While most of the corrections were incredibly helpful, I was a bit surprised by this change. It would be perfect if the AI could suggest corrections while preserving the original intent of my story."
+            }
+        },
+        "aiRevisedScript": {
+            "essayScript": "이 친구는 제시카예요. 제시카는 한국영화클럽 멤버예요. 미국 사람이에요. 한국대학교 학생이에요. 이학년이에요. 그리고 저 친구는 피터예요. 피터는 한국영화클럽 멤버가 아니에요. 피터도 미국 사람이에요. 뉴욕대학교 학생이에요. 피터도 일학년이에요. 그리고 이 친구는 존이에요. 존도 한국영화클럽 멤버가 아니에요. 존은 중국 사람이에요. 서울대학교 학생이에요. 존도 일학년이에요.",
+            "questions": [
+            "제시카는 어느 대학교에 다녀요?",
+            "제시카는 한국영화클럽 멤버예요?",
+            "피터는 몇 학년이에요?",
+            "피터는 어느 대학교에 다녀요?",
+            "존은 뉴욕대학교 학생이에요?",
+            "존은 몇 학년이에요?"
+            ],
+            "answers": [
+            "한국대학교에 다녀요.",
+            "네, 멤버예요.",
+            "일 학년이에요.",
+            "뉴욕대학교 학생이에요.",
+            "서울대학교 학생이에요.",
+            "일 학년이에요."
+            ]
+        }
+        }
+    }
+}
