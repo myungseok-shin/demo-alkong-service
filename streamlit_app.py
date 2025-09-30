@@ -261,15 +261,15 @@ if 'current_history' not in st.session_state:
     st.session_state.current_history = []
 if 'assessment_data' not in st.session_state:
     st.session_state.assessment_data = [
-        {"assessmentId": 10, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 20, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 30, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 31, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 32, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 33, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 40, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 41, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-        {"assessmentId": 50, "isAssessmentConfirmed": False, "isAssessmentCompleted": False}
+        {"assessmentId": 10, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 20, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 30, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 31, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 32, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 33, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 40, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 41, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+        {"assessmentId": 50, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False}
     ]
 if 'issue_data' not in st.session_state:
     st.session_state.issue_data = []  # API 스펙에 맞춰 빈 배열로 초기화
@@ -442,15 +442,15 @@ def create_input_data(user_name, user_age, user_school, user_grade, user_class,
             },
             "issueData": [],
                 "assessmentData": [
-                    {"assessmentId": 10, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 20, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 30, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 31, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 32, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 33, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 40, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 41, "isAssessmentConfirmed": False, "isAssessmentCompleted": False},
-                    {"assessmentId": 50, "isAssessmentConfirmed": False, "isAssessmentCompleted": False}
+                    {"assessmentId": 10, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 20, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 30, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 31, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 32, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 33, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 40, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 41, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 50, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False}
                 ],
             "attentionLevel": 1
         }
