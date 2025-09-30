@@ -10,5 +10,5 @@ python-multipart==0.0.6
 aiohttp==3.8.6
 sse-starlette==1.6.5
 matplotlib==3.7.2
-httpx==0.26.1
+httpx==0.28.1
 plotly==5.19.0
