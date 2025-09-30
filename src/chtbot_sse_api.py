@@ -7,14 +7,17 @@ import aiohttp
 import json
 from datetime import datetime
 import httpx  # httpx 추가
-
+import streamlit as st
 load_dotenv()
 
 class ChatbotAPI:
     def __init__(self, polling_interval=0.2):  # polling 간격 최적화
-        self.api_key = os.getenv("API_KEY")
-        self.endpoint = os.getenv("ENDPOINT")
-        self.api_url = os.getenv("API_URL")
+        # self.api_key = os.getenv("API_KEY")
+        # self.endpoint = os.getenv("ENDPOINT")
+        # self.api_url = os.getenv("API_URL")
+        self.api_key = st.secrets["API_KEY"]
+        self.endpoint = st.secrets["ENDPOINT"]
+        self.api_url = st.secrets["API_URL"]
         self.headers = {
             "accept": "application/json",
             "x-api-key": self.api_key
