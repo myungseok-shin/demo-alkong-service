@@ -189,13 +189,14 @@ st.markdown("""
     .stChatInputContainer {
         position: fixed !important;
         bottom: 0 !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 1200px !important;
+        right: 20px !important;
+        width: 400px !important;
         background: white !important;
         padding: 20px !important;
         border-top: 1px solid #E5E7EB !important;
+        border-left: 1px solid #E5E7EB !important;
+        border-right: 1px solid #E5E7EB !important;
+        border-radius: 10px 10px 0 0 !important;
         z-index: 1 !important;
     }
     
