@@ -424,16 +424,12 @@ def display_previous_messages(messages, chat_placeholder):
     for message in messages:
         if message["role"] == "assistant":
             with st.chat_message(message["role"], avatar=AI_AVATAR):
-                col1, col2 = st.columns([0.9, 0.1])
-                with col1:
-                    st.write(message["content"])
-                    if "metadata" in message:
-                        display_metadata(message["metadata"], is_polling=False)
-                with col2:
-                    if "response_data" in message:
-                        with st.expander("🔍", expanded=False):
-                            st.markdown("### 응답 데이터")
-                            st.json(message["response_data"])
+                st.write(message["content"])
+                if "metadata" in message:
+                    display_metadata(message["metadata"], is_polling=False)
+                if "response_data" in message:
+                    with st.expander("🔍 응답 데이터 보기", expanded=False):
+                        st.json(message["response_data"])
         else:
             with st.chat_message(message["role"], avatar=USER_AVATAR):
                 st.write(message["content"])
@@ -444,16 +440,12 @@ def display_messages(messages, chat_placeholder, is_polling=False):
         for message in messages:
             if message["role"] == "assistant":
                 with st.chat_message(message["role"], avatar=AI_AVATAR):
-                    col1, col2 = st.columns([0.9, 0.1])
-                    with col1:
-                        st.write(message["content"])
-                        if "metadata" in message:
-                            display_metadata(message["metadata"], is_polling)
-                    with col2:
-                        if "response_data" in message:
-                            with st.expander("🔍", expanded=False):
-                                st.markdown("### 응답 데이터")
-                                st.json(message["response_data"])
+                    st.write(message["content"])
+                    if "metadata" in message:
+                        display_metadata(message["metadata"], is_polling)
+                    if "response_data" in message:
+                        with st.expander("🔍 응답 데이터 보기", expanded=False):
+                            st.json(message["response_data"])
             else:
                 with st.chat_message(message["role"], avatar=USER_AVATAR):
                     st.write(message["content"])
