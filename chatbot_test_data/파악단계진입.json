@@ -48,7 +48,7 @@
         "message": "음... 성적 문제가 너무 심각해서 우울해...."
     },
     "sessionData": {
-        "currentPhase": 200,
+        "currentPhase": 300,
         "problemData": {
             "observationProblem": [],
             "confirmedProblem": []
@@ -58,27 +58,32 @@
             {
                 "assessmentId": 1,
                 "isAssessmentConfirmed": false,
-                "isAssessmentCompleted": false
+                "isAssessmentCompleted": false,
+                "isValidAnswered": false
             },
             {
                 "assessmentId": 2,
                 "isAssessmentConfirmed": false,
-                "isAssessmentCompleted": false
+                "isAssessmentCompleted": false,
+                "isValidAnswered": false
             },
             {
                 "assessmentId": 3,
                 "isAssessmentConfirmed": false,
-                "isAssessmentCompleted": false
+                "isAssessmentCompleted": false,
+                "isValidAnswered": false
             },
             {
                 "assessmentId": 4,
                 "isAssessmentConfirmed": false,
-                "isAssessmentCompleted": false
+                "isAssessmentCompleted": false,
+                "isValidAnswered": false
             },
             {
                 "assessmentId": 5,
                 "isAssessmentConfirmed": false,
-                "isAssessmentCompleted": false
+                "isAssessmentCompleted": false,
+                "isValidAnswered": false
             }
         ],
         "attentionLevel": 1
