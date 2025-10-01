@@ -9,6 +9,12 @@ import asyncio
 import time
 import os
 
+# 페이지 기본 설정
+st.set_page_config(
+    page_title="정서 상담 챗봇",
+    page_icon="🤖",
+    layout="wide"
+)
 
 # Load whitelist from config file
 try:
@@ -25,14 +31,16 @@ except KeyError:
     st.error("화이트리스트 설정 파일의 구조가 잘못되었습니다.")
     st.stop()
 
+# 화이트리스트 검증
 user_name = st.text_input("이름 입력")
-
-# 체크
-if any(u["name"] == user_name for u in white_list):
-    st.success(f"{user_name} 접근 허용")
-else:
-    st.error("허용되지 않은 사용자")
+if not user_name:
+    st.warning("이름을 입력해주세요.")
     st.stop()
+elif not any(u["name"] == user_name for u in white_list):
+    st.error("허용되지 않은 사용자입니다.")
+    st.stop()
+else:
+    st.success(f"{user_name} 접근 허용")
 
 # 단계 매핑 딕셔너리
 PHASE_MAPPING = {
