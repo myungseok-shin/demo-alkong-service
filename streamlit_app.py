@@ -65,13 +65,6 @@ current_dir = Path(__file__).parent
 AI_AVATAR = get_image_base64(str(current_dir / "ryan.png"))
 USER_AVATAR = get_image_base64(str(current_dir / "choonsik2.png"))
 
-# 페이지 기본 설정
-st.set_page_config(
-    page_title="정서 상담 챗봇",
-    page_icon="🤖",
-    layout="wide"
-)
-
 # CSS 스타일 적용
 st.markdown("""
 <style>
