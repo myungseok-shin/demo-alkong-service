@@ -16,31 +16,29 @@ st.set_page_config(
     layout="wide"
 )
 
-# Load whitelist from config file
+# Load whitelist from Streamlit secrets
 try:
-    with open("config/whitelist.json", "r") as f:
-        whitelist_config = json.load(f)
-        white_list = whitelist_config["allowed_users"]
-except FileNotFoundError:
-    st.error("화이트리스트 설정 파일을 찾을 수 없습니다.")
-    st.stop()
-except json.JSONDecodeError:
-    st.error("화이트리스트 설정 파일 형식이 잘못되었습니다.")
-    st.stop()
+    white_list = st.secrets["whitelist"]["allowed_users"]
 except KeyError:
-    st.error("화이트리스트 설정 파일의 구조가 잘못되었습니다.")
-    st.stop()
+    # 개발 환경을 위한 기본값 설정
+    if st.secrets.get("dev_mode", False):
+        st.warning("⚠️ 개발 모드: 기본 화이트리스트를 사용합니다")
+        white_list = [{"name": "테스트사용자"}, {"name": "admin"}]
+    else:
+        st.error("화이트리스트 설정이 필요합니다. Streamlit secrets에 whitelist 설정을 추가해주세요.")
+        st.stop()
 
-# 화이트리스트 검증
-user_name = st.text_input("이름 입력")
-if not user_name:
-    st.warning("이름을 입력해주세요.")
-    st.stop()
-elif not any(u["name"] == user_name for u in white_list):
-    st.error("허용되지 않은 사용자입니다.")
-    st.stop()
-else:
-    st.success(f"{user_name} 접근 허용")
+# 화이트리스트 검증 (개발 모드가 아닐 때만)
+if not st.secrets.get("dev_mode", False):
+    user_name = st.text_input("이름 입력")
+    if not user_name:
+        st.warning("이름을 입력해주세요.")
+        st.stop()
+    elif not any(u["name"] == user_name for u in white_list):
+        st.error("허용되지 않은 사용자입니다.")
+        st.stop()
+    else:
+        st.success(f"{user_name} 접근 허용")
 
 # 단계 매핑 딕셔너리
 PHASE_MAPPING = {
