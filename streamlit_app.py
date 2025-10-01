@@ -9,6 +9,31 @@ import asyncio
 import time
 import os
 
+
+# Load whitelist from config file
+try:
+    with open("config/whitelist.json", "r") as f:
+        whitelist_config = json.load(f)
+        white_list = whitelist_config["allowed_users"]
+except FileNotFoundError:
+    st.error("화이트리스트 설정 파일을 찾을 수 없습니다.")
+    st.stop()
+except json.JSONDecodeError:
+    st.error("화이트리스트 설정 파일 형식이 잘못되었습니다.")
+    st.stop()
+except KeyError:
+    st.error("화이트리스트 설정 파일의 구조가 잘못되었습니다.")
+    st.stop()
+
+user_name = st.text_input("이름 입력")
+
+# 체크
+if any(u["name"] == user_name for u in white_list):
+    st.success(f"{user_name} 접근 허용")
+else:
+    st.error("허용되지 않은 사용자")
+    st.stop()
+
 # 단계 매핑 딕셔너리
 PHASE_MAPPING = {
     1: "인사",
