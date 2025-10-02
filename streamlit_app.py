@@ -476,18 +476,53 @@ if st.session_state.is_authenticated:
         st.session_state['ai_personality'] = ai_personality
         st.session_state['ai_formality'] = ai_formality
         
-        if st.button("요약 생성"):
-            if len(st.session_state.messages) > 2:
-                chat_summary_api = ChatSummaryAPI()
-                input_data = create_summary_input_data()
-                st.session_state['summary_results'] = chat_summary_api.post_request_via_sse(input_data)
-                if st.session_state['summary_results']:
-                    st.success("요약 생성 완료!")
-                    st.markdown("summary and report 페이지에서 요약을 확인하세요.")
+        # 버튼들을 위한 컬럼 생성
+        col1, col2 = st.columns(2)
+        
+        # 요약 생성 버튼
+        with col1:
+            if st.button("요약 생성"):
+                if len(st.session_state.messages) > 2:
+                    chat_summary_api = ChatSummaryAPI()
+                    input_data = create_summary_input_data()
+                    st.session_state['summary_results'] = chat_summary_api.post_request_via_sse(input_data)
+                    if st.session_state['summary_results']:
+                        st.success("요약 생성 완료!")
+                        st.markdown("summary and report 페이지에서 요약을 확인하세요.")
+                    else:
+                        st.error("요약 생성 실패!")
                 else:
-                    st.error("요약 생성 실패!")
-            else:
-                st.warning("먼저 대화를 진행해주세요.")
+                    st.warning("먼저 대화를 진행해주세요.")
+        
+        # 대화 초기화 버튼
+        with col2:
+            if st.button("대화 초기화", type="secondary"):
+                # 대화 관련 상태 초기화
+                st.session_state.messages = []
+                st.session_state.current_history = []
+                st.session_state.current_phase = 1
+                st.session_state.next_phase = 1
+                st.session_state.is_first_visit = True
+                st.session_state.assessment_data = [
+                    {"assessmentId": 10, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 20, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 30, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 31, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 32, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 33, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 40, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 41, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False},
+                    {"assessmentId": 50, "isAssessmentConfirmed": False, "isAssessmentCompleted": False, "isValidAnswered": False}
+                ]
+                st.session_state.issue_data = []
+                st.session_state.problem_data = {
+                    "observationProblem": [],
+                    "confirmedProblem": []
+                }
+                st.session_state.session_data = {}
+                st.session_state.summary_results = None
+                st.session_state.session_id = int(time.time() * 1000000)
+                st.success("대화가 초기화되었습니다. 새로운 대화를 시작하세요.")
 
 # API 요청 데이터 생성 함수
 def create_input_data(user_name, user_age, user_school, user_grade, user_class, 
