@@ -20,7 +20,7 @@ st.set_page_config(
 
 def get_client_ip():
     try:
-        headers = st._get_websocket_headers()
+        headers = st.get_websocket_headers()
         if headers and "X-Forwarded-For" in headers:
             return headers["X-Forwarded-For"].split(",")[0].strip()
     except:
