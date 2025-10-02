@@ -19,84 +19,84 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
-def get_public_ip() -> Optional[str]:
-    # 여러 IP 확인 서비스를 순차적으로 시도
-    ip_services = [
-        "https://api.ipify.org",           # ipify
-        "https://api.myip.com",            # myip
-        "https://ifconfig.me/ip",          # ifconfig.me
-        "https://icanhazip.com",           # icanhazip
-        "https://checkip.amazonaws.com"     # AWS
-    ]
+# def get_public_ip() -> Optional[str]:
+#     # 여러 IP 확인 서비스를 순차적으로 시도
+#     ip_services = [
+#         "https://api.ipify.org",           # ipify
+#         "https://api.myip.com",            # myip
+#         "https://ifconfig.me/ip",          # ifconfig.me
+#         "https://icanhazip.com",           # icanhazip
+#         "https://checkip.amazonaws.com"     # AWS
+#     ]
     
-    for service in ip_services:
-        try:
-            response = requests.get(service, timeout=3)
-            if response.status_code == 200:
-                ip = response.text.strip()
-                # myip.com은 JSON 응답을 반환
-                if service == "https://api.myip.com":
-                    ip = response.json()["ip"]
-                return ip
-        except:
-            continue
+#     for service in ip_services:
+#         try:
+#             response = requests.get(service, timeout=3)
+#             if response.status_code == 200:
+#                 ip = response.text.strip()
+#                 # myip.com은 JSON 응답을 반환
+#                 if service == "https://api.myip.com":
+#                     ip = response.json()["ip"]
+#                 return ip
+#         except:
+#             continue
     
-    st.error("공인 IP를 확인할 수 없습니다.")
-    return None
+#     st.error("공인 IP를 확인할 수 없습니다.")
+#     return None
 
-def get_real_client_ip():
-    try:
-        # 여러 IP 확인 서비스 시도
-        services = [
-            "https://api.ipify.org",
-            "https://api.my-ip.io/ip",
-            "https://checkip.amazonaws.com",
-            "https://ifconfig.me/ip"
-        ]
+# def get_real_client_ip():
+#     try:
+#         # 여러 IP 확인 서비스 시도
+#         services = [
+#             "https://api.ipify.org",
+#             "https://api.my-ip.io/ip",
+#             "https://checkip.amazonaws.com",
+#             "https://ifconfig.me/ip"
+#         ]
         
-        for service in services:
-            response = requests.get(service, timeout=5)
-            if response.status_code == 200:
-                client_ip = response.text.strip()
-                return client_ip
+#         for service in services:
+#             response = requests.get(service, timeout=5)
+#             if response.status_code == 200:
+#                 client_ip = response.text.strip()
+#                 return client_ip
                 
-    except Exception as e:
-        st.error(f"IP 확인 중 오류 발생: {str(e)}")
-    return None
+#     except Exception as e:
+#         st.error(f"IP 확인 중 오류 발생: {str(e)}")
+#     return None
 
-def get_client_ip():
-    try:
-        headers = _get_websocket_headers()
-        if headers and "X-Forwarded-For" in headers:
-            return headers["X-Forwarded-For"].split(",")[0].strip()
-    except:
-        pass
-    return None
+# def get_client_ip():
+#     try:
+#         headers = _get_websocket_headers()
+#         if headers and "X-Forwarded-For" in headers:
+#             return headers["X-Forwarded-For"].split(",")[0].strip()
+#     except:
+#         pass
+#     return None
 
-def is_ip_allowed(client_ip_str, allowed_networks):
-    if not client_ip_str:
-        return False
-    try:
-        client_ip = ip_address(client_ip_str)
-        for network_str in allowed_networks:
-            network = ip_network(network_str.strip(), strict=False)
-            if client_ip in network:
-                return True
-        return False
-    except:
-        return False
+# def is_ip_allowed(client_ip_str, allowed_networks):
+#     if not client_ip_str:
+#         return False
+#     try:
+#         client_ip = ip_address(client_ip_str)
+#         for network_str in allowed_networks:
+#             network = ip_network(network_str.strip(), strict=False)
+#             if client_ip in network:
+#                 return True
+#         return False
+#     except:
+#         return False
 
-allowed_networks = st.secrets["network"]["allowed_networks"]
-client_ip = get_real_client_ip()
+# allowed_networks = st.secrets["network"]["allowed_networks"]
+# client_ip = get_real_client_ip()
 
-# IP 체크
-if not is_ip_allowed(client_ip, allowed_networks):
-    st.error("🚫 사내 네트워크에서만 접속 가능합니다.")
-    st.info(f"현재 IP: {client_ip}")
-    st.stop()
+# # IP 체크
+# if not is_ip_allowed(client_ip, allowed_networks):
+#     st.error("🚫 사내 네트워크에서만 접속 가능합니다.")
+#     st.info(f"현재 IP: {client_ip}")
+#     st.stop()
 
-st.title("사내 전용 앱")
-st.success(f"✅ 접속 허용 (IP: {client_ip})")
+# st.title("사내 전용 앱")
+# st.success(f"✅ 접속 허용 (IP: {client_ip})")
 
 # 세션 상태에 인증 상태 추가
 if 'is_authenticated' not in st.session_state:
