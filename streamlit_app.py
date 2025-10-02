@@ -8,6 +8,7 @@ from pathlib import Path
 import asyncio
 import time
 import os
+from ipaddress import ip_address, ip_network
 
 # 페이지 기본 설정
 st.set_page_config(
@@ -15,6 +16,41 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
+
+
+def get_client_ip():
+    try:
+        headers = st._get_websocket_headers()
+        if headers and "X-Forwarded-For" in headers:
+            return headers["X-Forwarded-For"].split(",")[0].strip()
+    except:
+        pass
+    return None
+
+def is_ip_allowed(client_ip_str, allowed_networks):
+    if not client_ip_str:
+        return False
+    try:
+        client_ip = ip_address(client_ip_str)
+        for network_str in allowed_networks:
+            network = ip_network(network_str.strip(), strict=False)
+            if client_ip in network:
+                return True
+        return False
+    except:
+        return False
+
+allowed_networks = st.secrets["network"]["allowed_networks"]
+client_ip = get_client_ip()
+
+# IP 체크
+if not is_ip_allowed(client_ip, allowed_networks):
+    st.error("🚫 사내 네트워크에서만 접속 가능합니다.")
+    st.info(f"현재 IP: {client_ip}")
+    st.stop()
+
+st.title("사내 전용 앱")
+st.success(f"✅ 접속 허용 (IP: {client_ip})")
 
 # 세션 상태에 인증 상태 추가
 if 'is_authenticated' not in st.session_state:
