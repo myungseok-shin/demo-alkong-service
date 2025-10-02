@@ -10,6 +10,8 @@ import time
 import os
 from ipaddress import ip_address, ip_network
 from streamlit.web.server.websocket_headers import _get_websocket_headers
+import requests
+from typing import Optional
 
 # 페이지 기본 설정
 st.set_page_config(
@@ -17,7 +19,30 @@ st.set_page_config(
     page_icon="🤖",
     layout="wide"
 )
-
+def get_public_ip() -> Optional[str]:
+    # 여러 IP 확인 서비스를 순차적으로 시도
+    ip_services = [
+        "https://api.ipify.org",           # ipify
+        "https://api.myip.com",            # myip
+        "https://ifconfig.me/ip",          # ifconfig.me
+        "https://icanhazip.com",           # icanhazip
+        "https://checkip.amazonaws.com"     # AWS
+    ]
+    
+    for service in ip_services:
+        try:
+            response = requests.get(service, timeout=3)
+            if response.status_code == 200:
+                ip = response.text.strip()
+                # myip.com은 JSON 응답을 반환
+                if service == "https://api.myip.com":
+                    ip = response.json()["ip"]
+                return ip
+        except:
+            continue
+    
+    st.error("공인 IP를 확인할 수 없습니다.")
+    return None
 
 def get_client_ip():
     try:
@@ -42,7 +67,7 @@ def is_ip_allowed(client_ip_str, allowed_networks):
         return False
 
 allowed_networks = st.secrets["network"]["allowed_networks"]
-client_ip = get_client_ip()
+client_ip = get_public_ip()
 
 # IP 체크
 if not is_ip_allowed(client_ip, allowed_networks):
