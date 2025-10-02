@@ -445,7 +445,10 @@ if st.session_state.is_authenticated:
 
     # 채팅 영역을 스크롤 가능한 컨테이너로 생성
     chat_placeholder = st.empty()
-    display_messages(st.session_state.messages, chat_placeholder)
+    
+    # 초기화 중이 아닐 때만 메시지 표시
+    if not st.session_state.get('is_resetting', False):
+        display_messages(st.session_state.messages, chat_placeholder)
 
     # 사이드바 - 사용자 정보 입력
     with st.sidebar:
@@ -497,6 +500,9 @@ if st.session_state.is_authenticated:
         # 대화 초기화 버튼
         with col2:
             if st.button("대화 초기화", type="secondary"):
+                # 초기화 상태 설정
+                st.session_state.is_resetting = True
+                
                 # 대화 관련 상태 초기화
                 st.session_state.messages = []
                 st.session_state.current_history = []
@@ -706,6 +712,7 @@ if not st.session_state.messages and st.session_state.is_authenticated:
                 st.session_state.current_phase = next_phase
                 st.session_state.session_data = response['sessionData']
                 st.session_state.is_first_visit = False
+                st.session_state.is_resetting = False  # 초기화 상태 해제
 
 # 사용자 입력 (인증된 경우에만, 처리 중일 때는 비활성화)
 if st.session_state.is_authenticated and (prompt := st.chat_input("메시지를 입력하세요...", disabled=st.session_state.is_processing)):
