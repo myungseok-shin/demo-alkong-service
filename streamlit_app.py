@@ -522,7 +522,13 @@ if st.session_state.is_authenticated:
                 st.session_state.session_data = {}
                 st.session_state.summary_results = None
                 st.session_state.session_id = int(time.time() * 1000000)
-                st.success("대화가 초기화되었습니다. 새로운 대화를 시작하세요.")
+                
+                # 채팅 화면 초기화
+                chat_placeholder.empty()
+                
+                # JavaScript를 이용한 페이지 새로고침
+                st.success("대화가 초기화되었습니다. 새로운 대화를 시작합니다.")
+                st.rerun()
 
 # API 요청 데이터 생성 함수
 def create_input_data(user_name, user_age, user_school, user_grade, user_class, 
