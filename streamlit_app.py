@@ -44,6 +44,26 @@ def get_public_ip() -> Optional[str]:
     st.error("공인 IP를 확인할 수 없습니다.")
     return None
 
+def get_real_client_ip():
+    try:
+        # 여러 IP 확인 서비스 시도
+        services = [
+            "https://api.ipify.org",
+            "https://api.my-ip.io/ip",
+            "https://checkip.amazonaws.com",
+            "https://ifconfig.me/ip"
+        ]
+        
+        for service in services:
+            response = requests.get(service, timeout=5)
+            if response.status_code == 200:
+                client_ip = response.text.strip()
+                return client_ip
+                
+    except Exception as e:
+        st.error(f"IP 확인 중 오류 발생: {str(e)}")
+    return None
+
 def get_client_ip():
     try:
         headers = _get_websocket_headers()
@@ -67,7 +87,7 @@ def is_ip_allowed(client_ip_str, allowed_networks):
         return False
 
 allowed_networks = st.secrets["network"]["allowed_networks"]
-client_ip = get_public_ip()
+client_ip = get_real_client_ip()
 
 # IP 체크
 if not is_ip_allowed(client_ip, allowed_networks):
