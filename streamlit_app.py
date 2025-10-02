@@ -16,6 +16,10 @@ st.set_page_config(
     layout="wide"
 )
 
+# 세션 상태에 인증 상태 추가
+if 'is_authenticated' not in st.session_state:
+    st.session_state.is_authenticated = False
+
 # Load whitelist from Streamlit secrets
 try:
     white_list = st.secrets["whitelist"]["allowed_users"]
@@ -24,6 +28,7 @@ except KeyError:
     if st.secrets.get("dev_mode", False):
         st.warning("⚠️ 개발 모드: 기본 화이트리스트를 사용합니다")
         white_list = [{"name": "테스트사용자"}, {"name": "admin"}]
+        st.session_state.is_authenticated = True  # 개발 모드에서는 자동 인증
     else:
         st.error("화이트리스트 설정이 필요합니다. Streamlit secrets에 whitelist 설정을 추가해주세요.")
         st.stop()
@@ -33,12 +38,15 @@ if not st.secrets.get("dev_mode", False):
     user_name = st.text_input("이름 입력")
     if not user_name:
         st.warning("이름을 입력해주세요.")
+        st.session_state.is_authenticated = False
         st.stop()
     elif not any(u["name"] == user_name for u in white_list):
         st.error("허용되지 않은 사용자입니다.")
+        st.session_state.is_authenticated = False
         st.stop()
     else:
         st.success(f"{user_name} 접근 허용")
+        st.session_state.is_authenticated = True
 
 # 단계 매핑 딕셔너리
 PHASE_MAPPING = {
@@ -379,49 +387,6 @@ def create_summary_input_data():
     }
 
 
-# 사이드바 - 사용자 정보 입력
-with st.sidebar:
-    st.header("🧑‍💻 사용자 정보")
-    user_name = st.text_input("이름", value="김춘식")
-    user_age = st.number_input("나이", min_value=1, max_value=100, value=10)
-    user_school = st.text_input("학교", value="제네시스랩 초등학교")
-    user_grade = st.number_input("학년", min_value=1, max_value=6, value=3)
-    user_class = st.number_input("반", min_value=1, max_value=20, value=4)
-    
-    st.header("🤖 AI 페르소나 설정")
-    ai_personality = st.text_area(
-        "AI 성격",
-        value="대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감",
-        height=150
-    )
-    ai_formality = st.text_input(
-        "말투",
-        value="반말",
-        help="예: 반말, 존댓말, 친근한 말투 등"
-    )
-    
-    st.session_state['user_name'] = user_name
-    st.session_state['user_age'] = user_age
-    st.session_state['user_school'] = user_school
-    st.session_state['user_grade'] = user_grade
-    st.session_state['user_class'] = user_class
-    st.session_state['ai_personality'] = ai_personality
-    st.session_state['ai_formality'] = ai_formality
-    
-
-    if st.button("요약 생성"):
-        if len(st.session_state.messages) > 2:
-            chat_summary_api = ChatSummaryAPI()
-            input_data = create_summary_input_data()
-            st.session_state['summary_results'] = chat_summary_api.post_request_via_sse(input_data)
-            if st.session_state['summary_results']:
-                st.success("요약 생성 완료!")
-                st.markdown("summary and report 페이지에서 요약을 확인하세요.")
-                # st.json(st.session_state['summary_results'], expanded=True)
-            else:
-                st.error("요약 생성 실패!")
-        else:
-            st.warning("먼저 대화를 진행해주세요.")
 
 # 메타데이터 표시 함수
 def display_metadata(metadata, is_polling=False):
@@ -474,12 +439,55 @@ def display_messages(messages, chat_placeholder, is_polling=False):
                 with st.chat_message(message["role"], avatar=USER_AVATAR):
                     st.write(message["content"])
 
-# 메인 채팅 인터페이스
-st.title("🤖 정서 상담 챗봇")
+# 메인 채팅 인터페이스 (인증된 경우에만 표시)
+if st.session_state.is_authenticated:
+    st.title("🤖 정서 상담 챗봇")
 
-# 채팅 영역을 스크롤 가능한 컨테이너로 생성
-chat_placeholder = st.empty()
-display_messages(st.session_state.messages, chat_placeholder)
+    # 채팅 영역을 스크롤 가능한 컨테이너로 생성
+    chat_placeholder = st.empty()
+    display_messages(st.session_state.messages, chat_placeholder)
+
+    # 사이드바 - 사용자 정보 입력
+    with st.sidebar:
+        st.header("🧑‍💻 사용자 정보")
+        user_name = st.text_input("이름", value="김춘식")
+        user_age = st.number_input("나이", min_value=1, max_value=100, value=10)
+        user_school = st.text_input("학교", value="제네시스랩 초등학교")
+        user_grade = st.number_input("학년", min_value=1, max_value=6, value=3)
+        user_class = st.number_input("반", min_value=1, max_value=20, value=4)
+        
+        st.header("🤖 AI 페르소나 설정")
+        ai_personality = st.text_area(
+            "AI 성격",
+            value="대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감",
+            height=150
+        )
+        ai_formality = st.text_input(
+            "말투",
+            value="반말",
+            help="예: 반말, 존댓말, 친근한 말투 등"
+        )
+        
+        st.session_state['user_name'] = user_name
+        st.session_state['user_age'] = user_age
+        st.session_state['user_school'] = user_school
+        st.session_state['user_grade'] = user_grade
+        st.session_state['user_class'] = user_class
+        st.session_state['ai_personality'] = ai_personality
+        st.session_state['ai_formality'] = ai_formality
+        
+        if st.button("요약 생성"):
+            if len(st.session_state.messages) > 2:
+                chat_summary_api = ChatSummaryAPI()
+                input_data = create_summary_input_data()
+                st.session_state['summary_results'] = chat_summary_api.post_request_via_sse(input_data)
+                if st.session_state['summary_results']:
+                    st.success("요약 생성 완료!")
+                    st.markdown("summary and report 페이지에서 요약을 확인하세요.")
+                else:
+                    st.error("요약 생성 실패!")
+            else:
+                st.warning("먼저 대화를 진행해주세요.")
 
 # API 요청 데이터 생성 함수
 def create_input_data(user_name, user_age, user_school, user_grade, user_class, 
@@ -569,8 +577,8 @@ def create_input_data(user_name, user_age, user_school, user_grade, user_class,
         }
     }
 
-# 첫 로드시 자동 메시지 생성
-if not st.session_state.messages:
+# 첫 로드시 자동 메시지 생성 (인증된 경우에만)
+if not st.session_state.messages and st.session_state.is_authenticated:
     
     # 요청 시작 시간 기록
     request_start_time = datetime.now()
@@ -658,8 +666,8 @@ if not st.session_state.messages:
                 st.session_state.session_data = response['sessionData']
                 st.session_state.is_first_visit = False
 
-# 사용자 입력 (처리 중일 때는 비활성화)
-if prompt := st.chat_input("메시지를 입력하세요...", disabled=st.session_state.is_processing):
+# 사용자 입력 (인증된 경우에만, 처리 중일 때는 비활성화)
+if st.session_state.is_authenticated and (prompt := st.chat_input("메시지를 입력하세요...", disabled=st.session_state.is_processing)):
     # 요청 시작 시간 기록
     request_start_time = datetime.now()
     # 사용자 메시지 저장
