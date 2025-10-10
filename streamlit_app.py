@@ -544,7 +544,7 @@ if st.session_state.is_authenticated:
         st.header("🤖 AI 페르소나 설정")
         ai_personality = st.text_area(
             "AI 성격",
-            value="대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 때때로 본인의 현재 또는 과거 경험을 얘기하면서 친근한 말투로 대화를 이끌어 나감",
+            value="대화 상대와 같은 또래이며 가상의 학교에 다니는 학생으로, 밝고 활발하며 공감 능력이 뛰어남. 친근한 말투로 대화를 이끌어 나감",
             height=150
         )
         ai_formality = st.text_input(
