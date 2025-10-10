@@ -104,6 +104,7 @@ with col1:
     if st.button("요약 생성"):
         chat_summary_api = ChatSummaryAPI()
         input_data = create_summary_input_data()
+        st.json(input_data, expanded=False)
         st.session_state['summary_results'] = chat_summary_api.post_request_via_sse(input_data)
         if st.session_state['summary_results']:
             st.success("요약 생성 완료!")
