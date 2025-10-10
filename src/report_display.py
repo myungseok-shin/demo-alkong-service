@@ -7,7 +7,7 @@ def get_attention_level_info(phase, attention_level):
         if attention_level == 100:
             return "#ffc107", "정서적 지지 필요"  # 노랑
         elif attention_level == 200:
-            return "#fd7e14", "긴급 개입 필요"   # 주황
+            return "#fd7e14", "적극적 관심 필요"   # 주황
         elif attention_level == 300:
             return "#dc3545", "긴급 개입 필요"   # 빨강
     elif phase == 310:
