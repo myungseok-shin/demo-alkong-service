@@ -93,7 +93,7 @@ def create_report_input_data():
             "isEmergency": False,
             "aiSuggestions": st.session_state.summary_results["aiSuggestions"],
             "assessmentData": st.session_state.summary_results["assessmentData"],
-            "attentionLevel": last_ai_message["metadata"]["attention_level"] if last_ai_message else 1,
+            "attentionLevel": st.session_state.summary_results["attentionLevel"]
         }
     }
 
