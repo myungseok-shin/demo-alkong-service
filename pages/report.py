@@ -106,9 +106,7 @@ with col1:
         input_data = create_summary_input_data()
         st.json(input_data, expanded=False)
         st.session_state['summary_results'] = chat_summary_api.post_request_via_sse(input_data)
-        if st.session_state['summary_results']:
-            st.success("요약 생성 완료!")
-        else:
+        if not st.session_state['summary_results']:
             st.error("요약 생성 실패!")
     
     # 요약 결과가 있으면 표시
