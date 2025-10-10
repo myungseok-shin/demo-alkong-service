@@ -120,6 +120,7 @@ with col2:
         if st.button("리포트 생성"):
             report_api = ReportAPI()
             input_data = create_report_input_data()
+            st.json(input_data, expanded=False)
             st.session_state["report_results"] = report_api.post_request_via_sse(input_data)
             if not st.session_state['report_results']:
                 st.error("리포트 생성 실패!")
