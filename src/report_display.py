@@ -251,9 +251,7 @@ def display_situation_analysis(current_situation):
         with st.container():
             keywords = current_situation['emotionalKeywords']
             # 키워드 표시
-            _, col0, _ = st.columns([1,3,1])
-            with col0: 
-                st.info(f"총 {keywords.get('studentMessageCount')}개의 문장에서 **부정 키워드 {keywords.get('negativeKeywordCount')}개**, **긍정 키워드 {keywords.get('positiveKeywordCount')}개**가 발견되었습니다.")
+            st.info(f"총 {keywords.get('studentMessageCount')}개의 문장에서 **부정 키워드 {keywords.get('negativeKeywordCount')}개**, **긍정 키워드 {keywords.get('positiveKeywordCount')}개**가 발견되었습니다.")
             negative_keywords = []
             negative_categories = []
             positive_categories = []
