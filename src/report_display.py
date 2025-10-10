@@ -349,6 +349,17 @@ def display_report_page(report_data):
         st.warning("리포트 데이터가 없습니다. 먼저 리포트를 생성해주세요.")
         return
     
+    st.markdown("""
+<style>
+    /* 마지막 컬럼 제외하고 오른쪽에 선 추가 */
+    [data-testid="column"]:not(:last-child) {
+        border-right: 2px solid #e0e0e0;
+        padding-right: 20px;
+        margin-right: 20px;
+    }
+</style>
+""", unsafe_allow_html=True)
+    
     phase = report_data.get('phase', 1)
     
     # 페이지 레이아웃
