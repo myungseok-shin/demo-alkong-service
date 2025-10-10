@@ -354,8 +354,8 @@ def display_report_page(report_data):
     /* 마지막 컬럼 제외하고 오른쪽에 선 추가 */
     [data-testid="column"]:not(:last-child) {
         border-right: 2px solid #e0e0e0;
-        padding-right: 20px;
-        margin-right: 20px;
+        padding-right: 2px;
+        margin-right: 2px;
     }
 </style>
 """, unsafe_allow_html=True)
